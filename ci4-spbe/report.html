@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Laporan Progress Project SPBE</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; padding: 40px; margin: 0; background: #fff; }
+        .header { text-align: center; border-bottom: 2px solid #2563eb; padding-bottom: 20px; margin-bottom: 30px; }
+        h1 { color: #1e3a8a; margin: 0; font-size: 28px; }
+        h2 { color: #2563eb; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px; margin-top: 30px; font-size: 20px; }
+        h3 { color: #1f2937; font-size: 16px; margin-top: 20px; }
+        p, li { font-size: 14px; }
+        .subtitle { color: #6b7280; font-size: 14px; margin-top: 5px; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; }
+        .box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-top: 15px; }
+        .status-badge { display: inline-block; padding: 3px 8px; font-size: 12px; font-weight: bold; border-radius: 4px; }
+        .status-done { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .status-progress { background: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+        th, td { border: 1px solid #e5e7eb; padding: 10px; text-align: left; }
+        th { background: #f3f4f6; color: #374151; font-weight: 600; }
+        .footer { margin-top: 50px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #e5e7eb; padding-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Laporan Progress Pengembangan (Status Update)</h1>
+        <div class="subtitle">Sistem Monitoring IoT SPBE BBPOM Bandung</div>
+        <div class="subtitle">Tanggal: 30 August 2026</div>
+    </div>
+
+    <p>Dokumen ini merangkum sejauh mana pengembangan sistem monitoring SPBE BBPOM (berbasis CodeIgniter 4 dan perangkat keras ESP32) telah diselesaikan hingga saat ini.</p>
+
+    <h2>1. Arsitektur & Infrastruktur Sistem <span class="status-badge status-done">Selesai 100%</span></h2>
+    <ul>
+        <li><strong>Backend Framework:</strong> Diimplementasikan menggunakan <strong>CodeIgniter 4 (CI4)</strong>. Struktur routing, keamanan (API Keys), dan arsitektur kontroler telah berjalan stabil.</li>
+        <li><strong>Database:</strong> Menggunakan <strong>MySQL</strong>. Skema tabel utama (seperti <code>iot_sensor_logs</code>, <code>pegawai</code>, <code>spbe_evaluasi</code>) sudah terdefinisi dan menyimpan data dengan format yang tepat.</li>
+        <li><strong>Frontend:</strong> Berbasis antarmuka <strong>Single Page Application (SPA)</strong> dengan vanilla JavaScript, yang memastikan peralihan menu (Monitoring, Infrastruktur, Evaluasi) terjadi instan tanpa *reload* halaman.</li>
+    </ul>
+
+    <h2>2. Integrasi Perangkat Keras (IoT) <span class="status-badge status-done">Selesai 100%</span></h2>
+    <p>Pengembangan dari sisi perangkat fisik (ESP32) telah selesai dikonfigurasi dengan fitur berikut:</p>
+    <ul>
+        <li><strong>Pembacaan Sensor:</strong> Sensor DHT22/11 (untuk Suhu & Kelembapan) dan Sensor MQ-135 (untuk Gas / Kualitas Udara) telah berhasil digabungkan dan dapat membaca metrik ruangan secara akurat.</li>
+        <li><strong>Sistem Transmisi Cerdas:</strong> Skrip C++ pada Arduino sudah dilengkapi dengan fitur pengiriman payload JSON melalui HTTP POST (ke Endpoint CI4) dengan sistem perlindungan putus koneksi (Auto-Reconnect WiFi).</li>
+        <li><strong>Alarm Otomatis (Buzzer):</strong> Logika proteksi telah diimplementasikan, di mana Buzzer akan berbunyi selama 10 detik apabila suhu lingkungan melebihi batas ( > 25°C ).</li>
+    </ul>
+
+    <h2>3. Modul Dashboard Monitoring <span class="status-badge status-done">Selesai 95%</span></h2>
+    <p>Dashboard utama (di <code>/monitoring</code>) berfungsi secara penuh untuk menampilkan visualisasi data secara <i>real-time</i>:</p>
+    <ul>
+        <li><strong>Live Chart (Grafik Visual):</strong> Tren Pergerakan Suhu, Kelembapan, dan kualitas udara divisualisasikan dalam grafik garis interaktif yang terus diperbarui (auto-fetch setiap 10 detik) tanpa perlu menyegarkan halaman browser.</li>
+        <li><strong>Smart Alert Banner:</strong> Fitur notifikasi di tampilan web yang secara dinamis berubah warna merah/hijau (Bahaya/Aman) berdasarkan data titik sensor suhu paling aktual.</li>
+        <li><strong>Daily Recap Engine:</strong> Tabel ringkasan yang secara cerdas menotal nilai Rata-rata, Minimum, dan Maksimum dari seluruh pengujian sensor pada hari ini.</li>
+        <li><strong>Export PDF & CSV:</strong> Sistem pendukung untuk langsung mencetak rekapan data sensor hari ini menjadi dokumen cetak atau format *spreadsheet* (Excel).</li>
+        <li><i>(Simulasi)</i> Gauge Kelistrikan: Untuk purwarupa Alat 1 (Otomasi AC Ruang Keuangan), gauge voltase, ampere, dan watt saat ini masih menggunakan mesin simulasi, namun kerangka antarmukanya sudah 100% siap untuk disuntikkan data sensor sungguhan di masa depan.</li>
+    </ul>
+
+    <h2>4. Modul Admin & Pengaturan <span class="status-badge status-progress">Dalam Proses (Tersedia Kerangka)</span></h2>
+    <ul>
+        <li><strong>Halaman Admin Panel (<code>/admin</code>):</strong> Tata letak dan <i>User Interface</i> (UI) pengaturan batas Suhu & Kelembapan, serta status AC sudah dibuat.</li>
+        <li><strong>To-Do Selanjutnya:</strong> Menyambungkan tombol 'Simpan' pada panel pengaturan tersebut langsung ke database melalui operasi CRUD, serta mengaktifkan layar <i>Login/Authentication</i> CI4.</li>
+    </ul>
+
+    <div class="box">
+        <h3>Ringkasan Kesiapan Presentasi</h3>
+        <p>Sistem ini sudah dapat didemonstrasikan sepenuhnya secara <i>end-to-end</i>. Anda dapat menunjukkan bagaimana perubahan suhu di sensor fisik (ESP32) langsung memengaruhi pergerakan grafik di *Dashboard* Web (berkat mekanisme <i>Real-time Polling</i>) serta memicu suara alarm apabila batas kritis dilewati.</p>
+    </div>
+
+    <div class="footer">
+        Dihasilkan secara otomatis oleh Sistem Antigravity | Project ci4-spbe
+    </div>
+
+</body>
+</html>
