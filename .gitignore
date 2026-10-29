@@ -85,6 +85,15 @@ php_errors.log
 # Composer
 #-------------------------
 vendor/
+node_modules/
+
+# Local Scratch Scripts
+clear_all.php
+clear_db.php
+fix_js.php
+fix_js2.php
+perbaiki_error.php
+test_db.php
 
 #-------------------------
 # IDE / Development Files

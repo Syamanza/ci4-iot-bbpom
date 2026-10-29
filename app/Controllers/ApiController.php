@@ -11,6 +11,55 @@ class ApiController extends ResourceController
         return $this->getData();
     }
 
+    private function calcLabDeviceRecap($db, $deviceId, $date, $maxTempLimit = 25.0)
+    {
+        $query = $db->query("
+            SELECT 
+                COUNT(*) as count,
+                SUM(temperature) as sumSuhu,
+                MIN(temperature) as minSuhu,
+                MAX(temperature) as maxSuhu,
+                SUM(humidity) as sumHum,
+                MIN(humidity) as minHum,
+                MAX(humidity) as maxHum,
+                SUM(air_quality) as sumMQ,
+                MIN(air_quality) as minMQ,
+                MAX(air_quality) as maxMQ,
+                SUM(CASE WHEN temperature > ? THEN 1 ELSE 0 END) as alertCount
+            FROM log_ruang_lab 
+            WHERE DATE(created_at) = ? AND device_id = ?
+        ", [$maxTempLimit, $date, $deviceId]);
+        $row = $query->getRow();
+
+        $qKeu = $db->query("
+            SELECT 
+                COUNT(*) as count,
+                SUM(CASE WHEN ac_status = 1 THEN 1 ELSE 0 END) as acOnCount,
+                SUM(CASE WHEN ac_status = 0 THEN 1 ELSE 0 END) as acOffCount,
+                AVG(occupancy) as avgOcc
+            FROM log_ruang_keuangan 
+            WHERE DATE(created_at) = ? AND device_id = ?
+        ", [$date, $deviceId]);
+        $rKeu = $qKeu->getRow();
+
+        return [
+            'count' => $row ? (int)$row->count : 0,
+            'avgSuhu' => ($row && $row->count > 0) ? round($row->sumSuhu / $row->count, 1) : 0,
+            'minSuhu' => ($row && $row->count > 0) ? round((float)$row->minSuhu, 1) : 0,
+            'maxSuhu' => ($row && $row->count > 0) ? round((float)$row->maxSuhu, 1) : 0,
+            'avgHum' => ($row && $row->count > 0) ? round($row->sumHum / $row->count, 1) : 0,
+            'minHum' => ($row && $row->count > 0) ? round((float)$row->minHum, 1) : 0,
+            'maxHum' => ($row && $row->count > 0) ? round((float)$row->maxHum, 1) : 0,
+            'avgMQ' => ($row && $row->count > 0) ? round($row->sumMQ / $row->count, 0) : 0,
+            'minMQ' => ($row && $row->count > 0) ? round((float)$row->minMQ, 0) : 0,
+            'maxMQ' => ($row && $row->count > 0) ? round((float)$row->maxMQ, 0) : 0,
+            'alerts' => $row ? (int)$row->alertCount : 0,
+            'acOnMinutes' => $rKeu ? round(((int)$rKeu->acOnCount * 5) / 60) : 0,
+            'acOffMinutes' => $rKeu ? round(((int)$rKeu->acOffCount * 5) / 60) : 0,
+            'avgOcc' => ($rKeu && $rKeu->count > 0) ? round((float)$rKeu->avgOcc, 1) : 0
+        ];
+    }
+
     public function getData()
     {
         $key = $this->request->getGet('key');
@@ -37,7 +86,7 @@ class ApiController extends ResourceController
             }
             $data['lab_non_ac'] = $dataLab2;
             
-            // 3. KEUANGAN
+            // 3. KEUANGAN (ALAT 1 - OTOMASI AC)
             $queryKeu = $db->query("SELECT * FROM log_ruang_keuangan WHERE device_id = 'ALAT_1' ORDER BY created_at DESC LIMIT 20");
             $resKeu = array_reverse($queryKeu->getResultArray());
             $dataKeu = [];
@@ -50,8 +99,105 @@ class ApiController extends ResourceController
                 ];
             }
             $data['keuangan'] = $dataKeu;
+
+            // 3B. KEUANGAN ALAT 2 (SENSOR INTENSITAS CAHAYA LUMENS & SERVO SAKLAR LAMPU)
+            $dataCahaya = [];
+            try {
+                $queryCahaya = $db->query("SELECT * FROM log_ruang_lab WHERE device_id = 'ALAT_2_CAHAYA' ORDER BY created_at DESC LIMIT 20");
+                $resCahaya = array_reverse($queryCahaya->getResultArray());
+                foreach ($resCahaya as $row) {
+                    $dataCahaya[] = [
+                        'lumens' => (int)$row['air_quality'],
+                        'lampu' => ((float)$row['temperature']) > 0 ? 'ON' : 'OFF',
+                        'servo' => (int)$row['humidity'],
+                        'waktu' => $row['created_at']
+                    ];
+                }
+            } catch (\Throwable $e) {}
+            $data['keuangan_cahaya'] = $dataCahaya;
+
+            // State Kontrol Manual / Otomatis Servo Lampu
+            $lightServoState = [
+                'ALAT_2_CAHAYA' => [
+                    'mode' => 'auto',
+                    'lampStatus' => 'ON',
+                    'servoAngle' => 90,
+                    'lumens' => 380,
+                    'minLumens' => 250,
+                    'maxLumens' => 500,
+                    'servoActionsToday' => 4
+                ]
+            ];
+            try {
+                $lsQuery = $db->query("SELECT json_data FROM spbe_json_store WHERE key_name = 'light_servo_state'");
+                $lsRow = $lsQuery->getRow();
+                if ($lsRow && $lsRow->json_data) {
+                    $decodedLs = json_decode($lsRow->json_data, true);
+                    if (is_array($decodedLs)) {
+                        $lightServoState = array_merge($lightServoState, $decodedLs);
+                    }
+                }
+            } catch (\Throwable $e) {}
+            $data['light_servo_state'] = $lightServoState;
+
+            // 4. CUSTOM ROOMS & DEVICES (Dynamic from spbe_json_store)
+            $customDevicesData = [];
+            try {
+                $cfgQuery = $db->query("SELECT json_data FROM spbe_json_store WHERE key_name = 'custom_iot_config'");
+                $cfgRow = $cfgQuery->getRow();
+                if ($cfgRow && $cfgRow->json_data) {
+                    $cfg = json_decode($cfgRow->json_data, true);
+                    if (!empty($cfg['devices']) && is_array($cfg['devices'])) {
+                        foreach ($cfg['devices'] as $dev) {
+                            $devId = $dev['deviceId'] ?? '';
+                            if (!$devId) continue;
+
+                            $qLab = $db->query("SELECT * FROM log_ruang_lab WHERE device_id = ? ORDER BY created_at DESC LIMIT 20", [$devId]);
+                            $rLab = array_reverse($qLab->getResultArray());
+                            $dLogs = [];
+                            foreach ($rLab as $r) {
+                                $dLogs[] = [
+                                    'suhu' => (float)$r['temperature'],
+                                    'hum' => (float)$r['humidity'],
+                                    'mq' => (int)$r['air_quality'],
+                                    'waktu' => $r['created_at']
+                                ];
+                            }
+
+                            $qKeu = $db->query("SELECT * FROM log_ruang_keuangan WHERE device_id = ? ORDER BY created_at DESC LIMIT 1", [$devId]);
+                            $rKeu = $qKeu->getRowArray();
+
+                            $customDevicesData[$devId] = [
+                                'logs' => $dLogs,
+                                'acStatus' => $rKeu ? (bool)$rKeu['ac_status'] : false,
+                                'kehadiran' => $rKeu ? (int)$rKeu['occupancy'] : 0
+                            ];
+                        }
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Ignore if table doesn't exist yet
+            }
+            $data['custom_devices'] = $customDevicesData;
             
             return $this->respond($data);
+        }
+
+        if ($key === 'customConfig') {
+            $defaultConfig = ['rooms' => [], 'devices' => []];
+            try {
+                $query = $db->query("SELECT json_data FROM spbe_json_store WHERE key_name = 'custom_iot_config'");
+                $row = $query->getRow();
+                if ($row && $row->json_data) {
+                    $decoded = json_decode($row->json_data, true);
+                    if (is_array($decoded)) {
+                        $defaultConfig = $decoded;
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Fallback to empty config
+            }
+            return $this->respond(['status' => 'success', 'config' => $defaultConfig]);
         }
         
         if ($key === 'todayAccumulator') {
@@ -92,63 +238,28 @@ class ApiController extends ResourceController
                 ]);
             }
             
-return $this->respond(['count' => 0]);
+            return $this->respond(['count' => 0]);
         }
 
         if ($key === 'recapByDate') {
             $date = $this->request->getGet('date') ?? date('Y-m-d');
+            $targetDeviceId = $this->request->getGet('device_id');
+
+            // If requesting recap for a specific custom device
+            if ($targetDeviceId) {
+                $maxLimit = (float)($this->request->getGet('max_suhu') ?? 25.0);
+                $devRecap = $this->calcLabDeviceRecap($db, $targetDeviceId, $date, $maxLimit);
+                return $this->respond([
+                    'status' => 'success',
+                    'date' => $date,
+                    'device_id' => $targetDeviceId,
+                    'recap' => $devRecap,
+                    'device_recap' => $devRecap
+                ]);
+            }
             
-            // Calculate for LAB
-            $queryLab = $db->query("
-                SELECT 
-                    COUNT(*) as count,
-                    SUM(temperature) as sumSuhu,
-                    MIN(temperature) as minSuhu,
-                    MAX(temperature) as maxSuhu,
-                    SUM(humidity) as sumHum,
-                    MIN(humidity) as minHum,
-                    MAX(humidity) as maxHum,
-                    SUM(air_quality) as sumMQ,
-                    MIN(air_quality) as minMQ,
-                    MAX(air_quality) as maxMQ,
-                    SUM(CASE WHEN temperature > 25.0 THEN 1 ELSE 0 END) as alertCount
-                FROM log_ruang_lab 
-                WHERE DATE(created_at) = ? AND device_id = 'ALAT_1_AC'
-            ", [$date]);
-            $rowLab = $queryLab->getRow();
-            
-            // Calculate for LAB_NON_AC
-            $queryLab2 = $db->query("
-                SELECT 
-                    COUNT(*) as count,
-                    SUM(temperature) as sumSuhu,
-                    MIN(temperature) as minSuhu,
-                    MAX(temperature) as maxSuhu,
-                    SUM(humidity) as sumHum,
-                    MIN(humidity) as minHum,
-                    MAX(humidity) as maxHum,
-                    SUM(air_quality) as sumMQ,
-                    MIN(air_quality) as minMQ,
-                    MAX(air_quality) as maxMQ,
-                    SUM(CASE WHEN temperature > 25.0 THEN 1 ELSE 0 END) as alertCount
-                FROM log_ruang_lab 
-                WHERE DATE(created_at) = ? AND device_id = 'ALAT_2_NON_AC'
-            ", [$date]);
-            $rowLab2 = $queryLab2->getRow();
-            
-            $lab2 = [
-                'count' => $rowLab2 ? (int)$rowLab2->count : 0,
-                'avgSuhu' => ($rowLab2 && $rowLab2->count > 0) ? round($rowLab2->sumSuhu / $rowLab2->count, 1) : 0,
-                'minSuhu' => $rowLab2 ? round((float)$rowLab2->minSuhu, 1) : 0,
-                'maxSuhu' => $rowLab2 ? round((float)$rowLab2->maxSuhu, 1) : 0,
-                'avgHum' => ($rowLab2 && $rowLab2->count > 0) ? round($rowLab2->sumHum / $rowLab2->count, 1) : 0,
-                'minHum' => $rowLab2 ? round((float)$rowLab2->minHum, 1) : 0,
-                'maxHum' => $rowLab2 ? round((float)$rowLab2->maxHum, 1) : 0,
-                'avgMQ' => ($rowLab2 && $rowLab2->count > 0) ? round($rowLab2->sumMQ / $rowLab2->count, 0) : 0,
-                'minMQ' => $rowLab2 ? round((float)$rowLab2->minMQ, 0) : 0,
-                'maxMQ' => $rowLab2 ? round((float)$rowLab2->maxMQ, 0) : 0,
-                'alerts' => $rowLab2 ? (int)$rowLab2->alertCount : 0
-            ];
+            $lab = $this->calcLabDeviceRecap($db, 'ALAT_1_AC', $date, 25.0);
+            $lab2 = $this->calcLabDeviceRecap($db, 'ALAT_2_NON_AC', $date, 25.0);
 
             // Calculate for KEUANGAN
             $queryKeu = $db->query("
@@ -162,20 +273,6 @@ return $this->respond(['count' => 0]);
                 WHERE DATE(created_at) = ? AND device_id = 'ALAT_1'
             ", [$date]);
             $rowKeu = $queryKeu->getRow();
-            
-            $lab = [
-                'count' => $rowLab ? (int)$rowLab->count : 0,
-                'avgSuhu' => ($rowLab && $rowLab->count > 0) ? round($rowLab->sumSuhu / $rowLab->count, 1) : 0,
-                'minSuhu' => $rowLab ? round((float)$rowLab->minSuhu, 1) : 0,
-                'maxSuhu' => $rowLab ? round((float)$rowLab->maxSuhu, 1) : 0,
-                'avgHum' => ($rowLab && $rowLab->count > 0) ? round($rowLab->sumHum / $rowLab->count, 1) : 0,
-                'minHum' => $rowLab ? round((float)$rowLab->minHum, 1) : 0,
-                'maxHum' => $rowLab ? round((float)$rowLab->maxHum, 1) : 0,
-                'avgMQ' => ($rowLab && $rowLab->count > 0) ? round($rowLab->sumMQ / $rowLab->count, 0) : 0,
-                'minMQ' => $rowLab ? round((float)$rowLab->minMQ, 0) : 0,
-                'maxMQ' => $rowLab ? round((float)$rowLab->maxMQ, 0) : 0,
-                'alerts' => $rowLab ? (int)$rowLab->alertCount : 0
-            ];
             
             // Assume 1 log = 5 seconds, so acOnCount * 5 / 60 = minutes
             $acOnMinutes = $rowKeu ? round(((int)$rowKeu->acOnCount * 5) / 60) : 0;
@@ -197,11 +294,308 @@ return $this->respond(['count' => 0]);
             ]);
         }
 
+        if ($key === 'monthlyTempHumReport') {
+            $deviceId = $this->request->getGet('device_id') ?: 'ALAT_1_AC';
+            $year = (int)($this->request->getGet('year') ?: date('Y'));
+            $month = (int)($this->request->getGet('month') ?: date('n'));
+
+            $daysData = [];
+            for ($d = 1; $d <= 31; $d++) {
+                $daysData[$d] = [
+                    'day' => $d,
+                    'suhu_08' => null,
+                    'hum_08'  => null,
+                    'suhu_15' => null,
+                    'hum_15'  => null
+                ];
+            }
+
+            try {
+                $q = $db->query("
+                    SELECT temperature, humidity, created_at
+                    FROM log_ruang_lab
+                    WHERE device_id = ? AND YEAR(created_at) = ? AND MONTH(created_at) = ?
+                    ORDER BY created_at ASC
+                ", [$deviceId, $year, $month]);
+                $rows = $q->getResultArray();
+
+                $bestDiff08 = [];
+                $bestDiff15 = [];
+
+                foreach ($rows as $r) {
+                    $ts = strtotime($r['created_at']);
+                    if (!$ts) continue;
+                    $day = (int)date('j', $ts);
+                    $secOfDay = ((int)date('G', $ts) * 3600) + ((int)date('i', $ts) * 60) + (int)date('s', $ts);
+
+                    $target08 = 8 * 3600;  // 08:00:00
+                    $target15 = 15 * 3600; // 15:00:00
+
+                    // Slot 08.00 (prioritaskan 07:45 - 08:15, fallback pagi 06:00 - 11:59)
+                    if ($secOfDay >= 6 * 3600 && $secOfDay < 12 * 3600) {
+                        $diff = abs($secOfDay - $target08);
+                        if (!isset($bestDiff08[$day]) || $diff < $bestDiff08[$day]) {
+                            $bestDiff08[$day] = $diff;
+                            $daysData[$day]['suhu_08'] = round((float)$r['temperature'], 1);
+                            $daysData[$day]['hum_08']  = (int)round((float)$r['humidity']);
+                        }
+                    }
+
+                    // Slot 15.00 (prioritaskan 14:45 - 15:15, fallback siang/sore 12:00 - 18:30)
+                    if ($secOfDay >= 12 * 3600 && $secOfDay <= 18.5 * 3600) {
+                        $diff = abs($secOfDay - $target15);
+                        if (!isset($bestDiff15[$day]) || $diff < $bestDiff15[$day]) {
+                            $bestDiff15[$day] = $diff;
+                            $daysData[$day]['suhu_15'] = round((float)$r['temperature'], 1);
+                            $daysData[$day]['hum_15']  = (int)round((float)$r['humidity']);
+                        }
+                    }
+                }
+            } catch (\Throwable $e) {}
+
+            return $this->respond([
+                'status' => 'success',
+                'device_id' => $deviceId,
+                'year' => $year,
+                'month' => $month,
+                'days' => array_values($daysData)
+            ]);
+        }
+
+        if ($key === 'historyData') {
+            $range = $this->request->getGet('range'); // 1h, 6h, 24h
+            $from = $this->request->getGet('from');   // Y-m-d
+            $to = $this->request->getGet('to');       // Y-m-d
+            $deviceIdsParam = $this->request->getGet('device_ids'); // comma-separated custom device IDs
+
+            // Build WHERE clause based on parameters
+            $whereTime = "DATE(created_at) = CURDATE()";
+            $params = [];
+
+            if ($range) {
+                $hours = 24;
+                if ($range === '1h') $hours = 1;
+                elseif ($range === '6h') $hours = 6;
+                elseif ($range === '24h') $hours = 24;
+                $whereTime = "created_at >= DATE_SUB(NOW(), INTERVAL $hours HOUR)";
+            } elseif ($from && $to) {
+                $whereTime = "DATE(created_at) >= ? AND DATE(created_at) <= ?";
+                $params = [$from, $to];
+            }
+
+            // If specific device_ids are requested (e.g. for custom room filter)
+            $customHistory = [];
+            if ($deviceIdsParam) {
+                $ids = array_filter(array_map('trim', explode(',', $deviceIdsParam)));
+                foreach ($ids as $dId) {
+                    $sqlCustom = "SELECT temperature, humidity, air_quality, created_at 
+                                  FROM log_ruang_lab 
+                                  WHERE device_id = ? AND $whereTime
+                                  ORDER BY created_at ASC";
+                    $qParams = array_merge([$dId], $params);
+                    $qRes = $db->query($sqlCustom, $qParams)->getResultArray();
+                    $arr = [];
+                    foreach ($qRes as $r) {
+                        $arr[] = [
+                            'suhu' => (float)$r['temperature'],
+                            'hum' => (float)$r['humidity'],
+                            'mq' => (int)$r['air_quality'],
+                            'waktu' => $r['created_at']
+                        ];
+                    }
+                    $customHistory[$dId] = $arr;
+                }
+            }
+
+            // Fetch Alat 1 (AC)
+            $sql1 = "SELECT temperature, humidity, air_quality, created_at 
+                     FROM log_ruang_lab 
+                     WHERE device_id = 'ALAT_1_AC' AND $whereTime
+                     ORDER BY created_at ASC";
+            $query1 = $db->query($sql1, $params);
+            $results1 = $query1->getResultArray();
+
+            // Fetch Alat 2 (Non-AC)
+            $sql2 = "SELECT temperature, humidity, air_quality, created_at 
+                     FROM log_ruang_lab 
+                     WHERE device_id = 'ALAT_2_NON_AC' AND $whereTime
+                     ORDER BY created_at ASC";
+            $query2 = $db->query($sql2, $params);
+            $results2 = $query2->getResultArray();
+
+            // Fetch Keuangan (ALAT_1)
+            $sqlKeu = "SELECT temperature, humidity, occupancy, ac_status, created_at 
+                       FROM log_ruang_keuangan 
+                       WHERE device_id = 'ALAT_1' AND $whereTime
+                       ORDER BY created_at ASC";
+            $resultsKeu = $db->query($sqlKeu, $params)->getResultArray();
+
+            // Build separate arrays for each device
+            $lab_ac = [];
+            foreach ($results1 as $row) {
+                $lab_ac[] = [
+                    'suhu' => (float)$row['temperature'],
+                    'hum' => (float)$row['humidity'],
+                    'mq' => (int)$row['air_quality'],
+                    'waktu' => $row['created_at']
+                ];
+            }
+
+            $lab_non_ac = [];
+            foreach ($results2 as $row) {
+                $lab_non_ac[] = [
+                    'suhu' => (float)$row['temperature'],
+                    'hum' => (float)$row['humidity'],
+                    'mq' => (int)$row['air_quality'],
+                    'waktu' => $row['created_at']
+                ];
+            }
+
+            $keuangan = [];
+            foreach ($resultsKeu as $row) {
+                $keuangan[] = [
+                    'suhu' => (float)$row['temperature'],
+                    'hum' => (float)$row['humidity'],
+                    'kehadiran' => (int)$row['occupancy'],
+                    'acStatus' => (bool)$row['ac_status'],
+                    'waktu' => $row['created_at']
+                ];
+            }
+
+            return $this->respond([
+                'status' => 'success',
+                'lab_ac' => $lab_ac,
+                'lab_non_ac' => $lab_non_ac,
+                'keuangan' => $keuangan,
+                'custom_history' => $customHistory,
+                'custom_devices' => $customHistory
+            ]);
+        }
+
+        if ($key === 'hulsDocuments') {
+            $docs = $this->getHulsDocumentsList($db);
+            $q = strtolower(trim((string)($this->request->getGet('q') ?? '')));
+            $statusFilter = trim((string)($this->request->getGet('status') ?? ''));
+
+            if ($q !== '' || $statusFilter !== '') {
+                $docs = array_values(array_filter($docs, function ($item) use ($q, $statusFilter) {
+                    if ($statusFilter !== '' && strcasecmp($item['status_dokumen'] ?? '', $statusFilter) !== 0) {
+                        return false;
+                    }
+                    if ($q !== '') {
+                        $haystack = strtolower(
+                            ($item['nomor_huls'] ?? '') . ' ' .
+                            ($item['kode_sampel'] ?? '') . ' ' .
+                            ($item['nama_sampel'] ?? '') . ' ' .
+                            ($item['nama_penguji'] ?? '') . ' ' .
+                            ($item['parameter_uji'] ?? '')
+                        );
+                        if (strpos($haystack, $q) === false) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }));
+            }
+
+            return $this->respond([
+                'status' => 'success',
+                'documents' => $docs,
+                'audit_logs' => $this->getHulsAuditLogs($db)
+            ]);
+        }
+
         // Return IoT settings for the admin panel
         $query = $db->query("SELECT json_data FROM spbe_json_store WHERE key_name = 'iot_settings'");
         $row = $query->getRow();
         $settings = $row ? json_decode($row->json_data, true) : [];
         return $this->respond(['iot_settings' => $settings]);
+    }
+
+    private function ensureHulsTables($db): bool
+    {
+        try {
+            $db->query("
+                CREATE TABLE IF NOT EXISTS `huls_documents` (
+                    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    `nomor_huls` VARCHAR(100) NOT NULL,
+                    `kode_sampel` VARCHAR(100) NOT NULL,
+                    `nama_sampel` VARCHAR(255) NOT NULL,
+                    `parameter_uji` TEXT DEFAULT NULL,
+                    `nama_penguji` VARCHAR(150) DEFAULT NULL,
+                    `tanggal_pengujian` VARCHAR(50) DEFAULT NULL,
+                    `tanggal_dilaporkan` VARCHAR(50) DEFAULT NULL,
+                    `hasil_uji` VARCHAR(255) DEFAULT NULL,
+                    `syarat` VARCHAR(255) DEFAULT NULL,
+                    `status_dokumen` VARCHAR(50) NOT NULL DEFAULT 'Draft',
+                    `kesimpulan_pre` VARCHAR(120) DEFAULT NULL,
+                    `kesimpulan_tahap1` TEXT DEFAULT NULL,
+                    `pre_investigasi_json` LONGTEXT DEFAULT NULL,
+                    `tahap1_json` LONGTEXT DEFAULT NULL,
+                    `created_by` VARCHAR(100) DEFAULT 'Admin Lab',
+                    `updated_by` VARCHAR(100) DEFAULT 'Admin Lab',
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            ");
+            $db->query("
+                CREATE TABLE IF NOT EXISTS `huls_audit_logs` (
+                    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    `huls_id` INT UNSIGNED NOT NULL,
+                    `nomor_huls` VARCHAR(100) DEFAULT NULL,
+                    `action` VARCHAR(100) NOT NULL,
+                    `actor_name` VARCHAR(100) DEFAULT NULL,
+                    `actor_role` VARCHAR(100) DEFAULT NULL,
+                    `notes` TEXT DEFAULT NULL,
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            ");
+            return true;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    private function getHulsDocumentsList($db): array
+    {
+        if ($this->ensureHulsTables($db)) {
+            try {
+                $rows = $db->query("SELECT * FROM huls_documents ORDER BY updated_at DESC, id DESC")->getResultArray();
+                $result = [];
+                foreach ($rows as $r) {
+                    $r['id'] = (int)$r['id'];
+                    $r['pre_investigasi'] = json_decode($r['pre_investigasi_json'] ?? '{}', true) ?: [];
+                    $r['tahap1'] = json_decode($r['tahap1_json'] ?? '{}', true) ?: [];
+                    unset($r['pre_investigasi_json'], $r['tahap1_json']);
+                    $result[] = $r;
+                }
+                return $result;
+            } catch (\Throwable $e) {}
+        }
+
+        // Fallback to spbe_json_store
+        try {
+            $q = $db->query("SELECT json_data FROM spbe_json_store WHERE key_name = 'huls_documents_store'");
+            $row = $q->getRow();
+            if ($row && $row->json_data) {
+                $decoded = json_decode($row->json_data, true);
+                if (is_array($decoded)) {
+                    return $decoded;
+                }
+            }
+        } catch (\Throwable $e) {}
+
+        return [];
+    }
+
+    private function getHulsAuditLogs($db): array
+    {
+        if ($this->ensureHulsTables($db)) {
+            try {
+                return $db->query("SELECT * FROM huls_audit_logs ORDER BY created_at DESC, id DESC LIMIT 40")->getResultArray();
+            } catch (\Throwable $e) {}
+        }
+        return [];
     }
 
     public function receiveSensor()
@@ -224,22 +618,42 @@ return $this->respond(['count' => 0]);
         $airQuality = isset($json->mq) ? (int)$json->mq : 0;
 
         // Route ke tabel yang benar berdasarkan ID alat
-        if ($roomId === 'KEUANGAN') {
+        if ($roomId === 'KEUANGAN' || $roomId === 'ALAT_1') {
             $acStatus = isset($json->ac) ? (int)$json->ac : 0;
             $occupancy = isset($json->occ) ? (int)$json->occ : 0;
             $sql = "INSERT INTO log_ruang_keuangan (device_id, temperature, humidity, occupancy, ac_status, created_at) 
                     VALUES (?, ?, ?, ?, ?, ?)";
             $db->query($sql, ['ALAT_1', $temperature, $humidity, $occupancy, $acStatus, date('Y-m-d H:i:s')]);
+        } elseif ($roomId === 'KEUANGAN_CAHAYA' || $roomId === 'ALAT_2_CAHAYA' || isset($json->lumens)) {
+            $devLightId = ($roomId === 'KEUANGAN_CAHAYA' || $roomId === 'ALAT_2_CAHAYA') ? 'ALAT_2_CAHAYA' : $roomId;
+            $lumensVal = isset($json->lumens) ? (int)$json->lumens : (isset($json->lux) ? (int)$json->lux : $airQuality);
+            $lampuOn = isset($json->lampu) ? (int)$json->lampu : ($lumensVal < 250 ? 1 : ($lumensVal > 500 ? 0 : 1));
+            $servoAngle = isset($json->servo) ? (int)$json->servo : ($lampuOn ? 90 : 0);
+
+            $sql = "INSERT INTO log_ruang_lab (device_id, temperature, humidity, air_quality, created_at) 
+                    VALUES (?, ?, ?, ?, ?)";
+            $db->query($sql, [$devLightId, $lampuOn, $servoAngle, $lumensVal, date('Y-m-d H:i:s')]);
         } else {
-            // Default: masuk ke tabel Lab
-            // Mapping: LAB / LAB_AC -> ALAT_1_AC, LAB_NON_AC -> ALAT_2_NON_AC
-            $deviceId = 'ALAT_1_AC';
-            if ($roomId === 'LAB_NON_AC') {
+            // Default: masuk ke tabel Lab (mendukung ALAT_1_AC, ALAT_2_NON_AC, maupun ID alat baru apa pun)
+            if ($roomId === 'LAB' || $roomId === 'LAB_AC' || $roomId === 'ALAT_1_AC') {
+                $deviceId = 'ALAT_1_AC';
+            } elseif ($roomId === 'LAB_NON_AC' || $roomId === 'ALAT_2_NON_AC') {
                 $deviceId = 'ALAT_2_NON_AC';
+            } else {
+                $deviceId = $roomId;
             }
             $sql = "INSERT INTO log_ruang_lab (device_id, temperature, humidity, air_quality, created_at) 
                     VALUES (?, ?, ?, ?, ?)";
             $db->query($sql, [$deviceId, $temperature, $humidity, $airQuality, date('Y-m-d H:i:s')]);
+
+            // Jika alat baru juga mengirim status AC / kehadiran
+            if (isset($json->ac) || isset($json->occ)) {
+                $acStatus = isset($json->ac) ? (int)$json->ac : 0;
+                $occupancy = isset($json->occ) ? (int)$json->occ : 0;
+                $sqlKeu = "INSERT INTO log_ruang_keuangan (device_id, temperature, humidity, occupancy, ac_status, created_at) 
+                           VALUES (?, ?, ?, ?, ?, ?)";
+                $db->query($sqlKeu, [$deviceId, $temperature, $humidity, $occupancy, $acStatus, date('Y-m-d H:i:s')]);
+            }
         }
 
         // ALARM LOGIC WA BOT
@@ -255,7 +669,7 @@ return $this->respond(['count' => 0]);
                 // Send cURL to Node WA Bot
                 $ch = curl_init('http://localhost:3000/send-message');
                 $payload = json_encode([
-                    'number' => '082123456789', // Gantilah secara dinamis jika mau
+                    'number' => '082123456789',
                     'message' => "🚨 *Peringatan SPBE BBPOM* 🚨\n\n📍 Ruang Reagen\nSuhu Saat ini: {$temperature}°C\nBatas Aman: 25.0°C\nKelembapan: {$humidity}%\nKualitas Udara: {$airQuality} PPM\n\nSegera lakukan pengecekan!"
                 ]);
                 
@@ -263,12 +677,11 @@ return $this->respond(['count' => 0]);
                 curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
                 curl_setopt($ch, CURLOPT_POST, true);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-                curl_setopt($ch, CURLOPT_TIMEOUT, 5); // Timeout cepat agar tidak hang
+                curl_setopt($ch, CURLOPT_TIMEOUT, 5);
                 
                 $response = curl_exec($ch);
                 curl_close($ch);
 
-                // Update timestamp
                 if ($lastSentRow) {
                     $db->query("UPDATE spbe_json_store SET json_data = ? WHERE key_name = 'last_wa_alert'", [date('Y-m-d H:i:s')]);
                 } else {
@@ -301,6 +714,211 @@ return $this->respond(['count' => 0]);
                 $db->query("INSERT INTO spbe_json_store (key_name, json_data) VALUES ('iot_settings', ?)", [$jsonString]);
             }
             return $this->respond(['status' => 'success', 'message' => 'Pengaturan IoT disimpan']);
+        }
+
+        // Custom Rooms & Devices Configuration via Dashboard
+        if ($key === 'customConfig') {
+            $jsonString = json_encode($json);
+            $query = $db->query("SELECT key_name FROM spbe_json_store WHERE key_name = 'custom_iot_config'");
+            if ($query->getRow()) {
+                $db->query("UPDATE spbe_json_store SET json_data = ? WHERE key_name = 'custom_iot_config'", [$jsonString]);
+            } else {
+                $db->query("INSERT INTO spbe_json_store (key_name, json_data) VALUES ('custom_iot_config', ?)", [$jsonString]);
+            }
+            return $this->respond(['status' => 'success', 'message' => 'Konfigurasi ruangan & alat berhasil disimpan']);
+        }
+
+        // Light Intensity Sensor & Servo Switch Control (Auto / Manual Switch ON-OFF)
+        if ($key === 'lightServoControl') {
+            $jsonString = json_encode($json);
+            try {
+                $query = $db->query("SELECT key_name FROM spbe_json_store WHERE key_name = 'light_servo_state'");
+                if ($query->getRow()) {
+                    $db->query("UPDATE spbe_json_store SET json_data = ? WHERE key_name = 'light_servo_state'", [$jsonString]);
+                } else {
+                    $db->query("INSERT INTO spbe_json_store (key_name, json_data) VALUES ('light_servo_state', ?)", [$jsonString]);
+                }
+            } catch (\Throwable $e) {}
+            return $this->respond(['status' => 'success', 'message' => 'Status saklar servo lampu berhasil diperbarui']);
+        }
+
+        // Insert Sample / Simulated Sensor Data into Database for Demo
+        if ($key === 'simulateDeviceData') {
+            $deviceId = $json->deviceId ?? '';
+            if (!$deviceId) {
+                return $this->fail('Device ID wajib diisi');
+            }
+            $suhu = isset($json->suhu) ? (float)$json->suhu : 23.0;
+            $hum = isset($json->hum) ? (float)$json->hum : 58.0;
+            $mq = isset($json->mq) ? (int)$json->mq : 650;
+            $ac = isset($json->ac) ? (int)$json->ac : 1;
+            $occ = isset($json->occ) ? (int)$json->occ : 2;
+
+            $sql = "INSERT INTO log_ruang_lab (device_id, temperature, humidity, air_quality, created_at) VALUES (?, ?, ?, ?, ?)";
+            $db->query($sql, [$deviceId, $suhu, $hum, $mq, date('Y-m-d H:i:s')]);
+
+            try {
+                $sqlKeu = "INSERT INTO log_ruang_keuangan (device_id, temperature, humidity, occupancy, ac_status, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+                $db->query($sqlKeu, [$deviceId, $suhu, $hum, $occ, $ac, date('Y-m-d H:i:s')]);
+            } catch (\Throwable $e) {}
+
+            return $this->respond(['status' => 'success', 'message' => 'Sampel data sensor disimpan ke database']);
+        }
+
+        // Save (Create / Update) HULS Document (Pre-Investigasi + Investigasi Tahap 1)
+        if ($key === 'saveHulsDocument') {
+            $payload = json_decode(json_encode($json), true) ?: [];
+            $pre = $payload['pre_investigasi'] ?? [];
+            $tahap1 = $payload['tahap1'] ?? [];
+
+            $namaSampel = trim((string)($payload['nama_sampel'] ?? $pre['nama_sampel'] ?? $tahap1['nama_sampel'] ?? ''));
+            $kodeSampel = trim((string)($payload['kode_sampel'] ?? $pre['kode_sampel'] ?? $tahap1['kode_sampel'] ?? ''));
+            $nomorHuls  = trim((string)($payload['nomor_huls'] ?? $pre['nomor_huls'] ?? $tahap1['nomor_huls'] ?? ''));
+
+            if ($namaSampel === '' || $kodeSampel === '' || $nomorHuls === '') {
+                return $this->failValidationErrors('Nama Sampel, Kode Sampel, dan Nomor HULS wajib diisi.');
+            }
+
+            $parameterUji   = trim((string)($payload['parameter_uji'] ?? $pre['parameter_uji'] ?? $tahap1['parameter_uji'] ?? ''));
+            $namaPenguji    = trim((string)($payload['nama_penguji'] ?? $pre['nama_penguji'] ?? $tahap1['nama_penguji'] ?? ''));
+            $tglPengujian   = trim((string)($payload['tanggal_pengujian'] ?? $pre['tanggal_pengujian'] ?? $tahap1['tanggal_pengujian'] ?? ''));
+            $tglDilaporkan  = trim((string)($payload['tanggal_dilaporkan'] ?? $pre['tanggal_dilaporkan'] ?? $tahap1['tanggal_dilaporkan'] ?? ''));
+            $hasilUji       = trim((string)($payload['hasil_uji'] ?? $pre['hasil_uji'] ?? $tahap1['hasil_uji'] ?? ''));
+            $syarat         = trim((string)($payload['syarat'] ?? $pre['syarat'] ?? $tahap1['syarat'] ?? ''));
+            $statusDokumen  = trim((string)($payload['status_dokumen'] ?? 'Draft'));
+            $kesimpulanPre  = trim((string)($pre['kesimpulan_pre'] ?? 'TMS_LANJUT_TAHAP_1'));
+            $kesimpulanT1   = trim((string)($tahap1['kesimpulan_fase1'] ?? ''));
+
+            $session = session();
+            $actorName = $session->get('userName') ?: ($payload['actor_name'] ?? 'Admin Lab');
+            $actorRole = $session->get('userRole') ?: ($payload['actor_role'] ?? 'Administrator');
+            $now = date('Y-m-d H:i:s');
+            $docId = isset($payload['id']) ? (int)$payload['id'] : 0;
+
+            if ($this->ensureHulsTables($db)) {
+                try {
+                    if ($docId === 0 && $nomorHuls !== '' && $kodeSampel !== '') {
+                        $dup = $db->query("SELECT id, pre_investigasi_json, tahap1_json FROM huls_documents WHERE nomor_huls = ? AND kode_sampel = ? ORDER BY id DESC LIMIT 1", [$nomorHuls, $kodeSampel])->getRow();
+                        if ($dup) {
+                            $docId = (int)$dup->id;
+                            $oldPre = json_decode((string)$dup->pre_investigasi_json, true) ?: [];
+                            $oldT1  = json_decode((string)$dup->tahap1_json, true) ?: [];
+                            foreach ($oldPre as $k => $v) {
+                                if ((!isset($pre[$k]) || $pre[$k] === '') && $v !== '') {
+                                    $pre[$k] = $v;
+                                }
+                            }
+                            foreach ($oldT1 as $k => $v) {
+                                if ((!isset($tahap1[$k]) || $tahap1[$k] === '') && $v !== '') {
+                                    $tahap1[$k] = $v;
+                                }
+                            }
+                        }
+                    }
+
+                    if ($docId > 0) {
+                        $existing = $db->query("SELECT id FROM huls_documents WHERE id = ?", [$docId])->getRow();
+                        if ($existing) {
+                            $db->query("
+                                UPDATE huls_documents SET
+                                    nomor_huls = ?,
+                                    kode_sampel = ?,
+                                    nama_sampel = ?,
+                                    parameter_uji = ?,
+                                    nama_penguji = ?,
+                                    tanggal_pengujian = ?,
+                                    tanggal_dilaporkan = ?,
+                                    hasil_uji = ?,
+                                    syarat = ?,
+                                    status_dokumen = ?,
+                                    kesimpulan_pre = ?,
+                                    kesimpulan_tahap1 = ?,
+                                    pre_investigasi_json = ?,
+                                    tahap1_json = ?,
+                                    updated_by = ?,
+                                    updated_at = ?
+                                WHERE id = ?
+                            ", [
+                                $nomorHuls, $kodeSampel, $namaSampel, $parameterUji, $namaPenguji,
+                                $tglPengujian, $tglDilaporkan, $hasilUji, $syarat, $statusDokumen,
+                                $kesimpulanPre, $kesimpulanT1,
+                                json_encode($pre, JSON_UNESCAPED_UNICODE),
+                                json_encode($tahap1, JSON_UNESCAPED_UNICODE),
+                                $actorName, $now, $docId
+                            ]);
+
+                            $actionLabel = $payload['audit_action'] ?? 'UPDATE_DOKUMEN_HULS';
+                            $notesLabel  = $payload['audit_notes'] ?? "Memperbarui dokumen HULS {$nomorHuls} (Status: {$statusDokumen})";
+                            $db->query("
+                                INSERT INTO huls_audit_logs (huls_id, nomor_huls, action, actor_name, actor_role, notes, created_at)
+                                VALUES (?, ?, ?, ?, ?, ?, ?)
+                            ", [$docId, $nomorHuls, $actionLabel, $actorName, $actorRole, $notesLabel, $now]);
+                        } else {
+                            $docId = 0;
+                        }
+                    }
+
+                    if ($docId === 0) {
+                        $db->query("
+                            INSERT INTO huls_documents
+                            (nomor_huls, kode_sampel, nama_sampel, parameter_uji, nama_penguji, tanggal_pengujian, tanggal_dilaporkan, hasil_uji, syarat, status_dokumen, kesimpulan_pre, kesimpulan_tahap1, pre_investigasi_json, tahap1_json, created_by, updated_by, created_at, updated_at)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        ", [
+                            $nomorHuls, $kodeSampel, $namaSampel, $parameterUji, $namaPenguji,
+                            $tglPengujian, $tglDilaporkan, $hasilUji, $syarat, $statusDokumen,
+                            $kesimpulanPre, $kesimpulanT1,
+                            json_encode($pre, JSON_UNESCAPED_UNICODE),
+                            json_encode($tahap1, JSON_UNESCAPED_UNICODE),
+                            $actorName, $actorName, $now, $now
+                        ]);
+                        $docId = (int)$db->insertID();
+                        $db->query("
+                            INSERT INTO huls_audit_logs (huls_id, nomor_huls, action, actor_name, actor_role, notes, created_at)
+                            VALUES (?, ?, 'CREATE_DOKUMEN_HULS', ?, ?, ?, ?)
+                        ", [$docId, $nomorHuls, $actorName, $actorRole, "Membuat dokumen HULS baru {$nomorHuls} untuk sampel {$kodeSampel}", $now]);
+                    }
+                } catch (\Throwable $e) {
+                    return $this->failServerError('Gagal menyimpan ke tabel HULS: ' . $e->getMessage());
+                }
+            }
+
+            return $this->respond([
+                'status' => 'success',
+                'message' => 'Dokumen HULS berhasil disimpan ke database.',
+                'id' => $docId,
+                'documents' => $this->getHulsDocumentsList($db),
+                'audit_logs' => $this->getHulsAuditLogs($db)
+            ]);
+        }
+
+        // Delete HULS Document
+        if ($key === 'deleteHulsDocument') {
+            $docId = isset($json->id) ? (int)$json->id : 0;
+            if ($docId <= 0) {
+                return $this->failValidationErrors('ID Dokumen HULS tidak valid.');
+            }
+            $session = session();
+            $actorName = $session->get('userName') ?: 'Admin Lab';
+            $actorRole = $session->get('userRole') ?: 'Administrator';
+
+            if ($this->ensureHulsTables($db)) {
+                try {
+                    $row = $db->query("SELECT nomor_huls, kode_sampel FROM huls_documents WHERE id = ?", [$docId])->getRow();
+                    $noHuls = $row ? $row->nomor_huls : ('#' . $docId);
+                    $db->query("DELETE FROM huls_documents WHERE id = ?", [$docId]);
+                    $db->query("
+                        INSERT INTO huls_audit_logs (huls_id, nomor_huls, action, actor_name, actor_role, notes, created_at)
+                        VALUES (?, ?, 'DELETE_DOKUMEN_HULS', ?, ?, ?, ?)
+                    ", [$docId, $noHuls, $actorName, $actorRole, "Menghapus dokumen HULS {$noHuls}", date('Y-m-d H:i:s')]);
+                } catch (\Throwable $e) {}
+            }
+
+            return $this->respond([
+                'status' => 'success',
+                'message' => 'Dokumen HULS berhasil dihapus.',
+                'documents' => $this->getHulsDocumentsList($db),
+                'audit_logs' => $this->getHulsAuditLogs($db)
+            ]);
         }
 
         return $this->fail('Invalid key');
