@@ -2235,7 +2235,7 @@
 
         doc.setFontSize(9);
         doc.setTextColor(148, 163, 184);
-        doc.text("Dokumen ini digenerate otomatis oleh sistem IoT BBPOM Bandung.", 105, 280, { align: "center" });
+        doc.text("Dokumen ini digenerate otomatis oleh sistem DigitLab BDG - BBPOM di Bandung.", 105, 280, { align: "center" });
 
         const blob = doc.output('blob');
         window.open(URL.createObjectURL(blob), '_blank');
@@ -2322,7 +2322,7 @@
 
         doc.setFontSize(9);
         doc.setTextColor(148, 163, 184);
-        doc.text("Dokumen ini digenerate otomatis oleh sistem IoT BBPOM Bandung.", 105, 280, { align: "center" });
+        doc.text("Dokumen ini digenerate otomatis oleh sistem DigitLab BDG - BBPOM di Bandung.", 105, 280, { align: "center" });
 
         const blob = doc.output('blob');
         window.open(URL.createObjectURL(blob), '_blank');
@@ -3164,7 +3164,7 @@
 
         doc.setFontSize(9);
         doc.setTextColor(148, 163, 184);
-        doc.text("Dokumen ini digenerate otomatis oleh sistem IoT BBPOM Bandung.", 105, 280, { align: "center" });
+        doc.text("Dokumen ini digenerate otomatis oleh sistem DigitLab BDG - BBPOM di Bandung.", 105, 280, { align: "center" });
 
         const blob = doc.output('blob');
         const url = URL.createObjectURL(blob);

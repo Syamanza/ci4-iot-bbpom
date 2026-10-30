@@ -505,6 +505,92 @@ class ApiController extends ResourceController
             ]);
         }
 
+        // ============================================================
+        // GET RENLAK (Rencana Pelaksanaan / Kegiatan Laboratorium)
+        // ============================================================
+        if ($key === 'renlakData') {
+            $activities = $this->getRenlakActivitiesList($db);
+            $q          = strtolower(trim((string)($this->request->getGet('q') ?? '')));
+            $tahun      = trim((string)($this->request->getGet('tahun') ?? ''));
+            $bulan      = trim((string)($this->request->getGet('bulan') ?? ''));
+            $kategori   = trim((string)($this->request->getGet('kategori') ?? ''));
+            $status     = trim((string)($this->request->getGet('status') ?? ''));
+
+            if ($q !== '' || $tahun !== '' || $bulan !== '' || $kategori !== '' || $status !== '') {
+                $activities = array_values(array_filter($activities, function ($item) use ($q, $tahun, $bulan, $kategori, $status) {
+                    if ($kategori !== '' && strcasecmp($item['kategori'] ?? '', $kategori) !== 0) {
+                        return false;
+                    }
+                    if ($status !== '' && strcasecmp($item['status_kegiatan'] ?? '', $status) !== 0) {
+                        return false;
+                    }
+                    if ($tahun !== '') {
+                        $yrInt = (int)$tahun;
+                        $hasYearInPlan = false;
+                        foreach (array_keys($item['jadwal_rencana'] ?? []) as $wk) {
+                            if (strpos($wk, $tahun . '-') === 0 && (float)($item['jadwal_rencana'][$wk] ?? 0) > 0) {
+                                $hasYearInPlan = true;
+                                break;
+                            }
+                        }
+                        foreach (array_keys($item['jadwal_realisasi'] ?? []) as $wk) {
+                            if (strpos($wk, $tahun . '-') === 0 && (float)($item['jadwal_realisasi'][$wk] ?? 0) > 0) {
+                                $hasYearInPlan = true;
+                                break;
+                            }
+                        }
+                        $tMulai   = (int)($item['tahun_mulai'] ?? 2026);
+                        $tSelesai = (int)($item['tahun_selesai'] ?? 2027);
+                        if (!$hasYearInPlan && ($yrInt < $tMulai || $yrInt > $tSelesai)) {
+                            return false;
+                        }
+                    }
+                    if ($bulan !== '') {
+                        $mPad = str_pad((string)(int)$bulan, 2, '0', STR_PAD_LEFT);
+                        $hasMonth = false;
+                        foreach (array_keys($item['jadwal_rencana'] ?? []) as $wk) {
+                            if (preg_match('/^\d{4}-' . $mPad . '-\d+$/', $wk) && (float)($item['jadwal_rencana'][$wk] ?? 0) > 0) {
+                                $hasMonth = true;
+                                break;
+                            }
+                        }
+                        if (!$hasMonth) {
+                            foreach (array_keys($item['jadwal_realisasi'] ?? []) as $wk) {
+                                if (preg_match('/^\d{4}-' . $mPad . '-\d+$/', $wk) && (float)($item['jadwal_realisasi'][$wk] ?? 0) > 0) {
+                                    $hasMonth = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!$hasMonth) {
+                            return false;
+                        }
+                    }
+                    if ($q !== '') {
+                        $haystack = strtolower(
+                            ($item['nomor_urut'] ?? '') . ' ' .
+                            ($item['kategori'] ?? '') . ' ' .
+                            ($item['nama_kegiatan'] ?? '') . ' ' .
+                            ($item['rencana_kegiatan'] ?? '') . ' ' .
+                            ($item['satuan'] ?? '') . ' ' .
+                            ($item['pic_penanggung_jawab'] ?? '') . ' ' .
+                            ($item['catatan_evaluasi'] ?? '')
+                        );
+                        if (strpos($haystack, $q) === false) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }));
+            }
+
+            return $this->respond([
+                'status'     => 'success',
+                'activities' => $activities,
+                'audit_logs' => $this->getRenlakAuditLogs($db)
+            ]);
+        }
+
         // Return IoT settings for the admin panel
         $query = $db->query("SELECT json_data FROM spbe_json_store WHERE key_name = 'iot_settings'");
         $row = $query->getRow();
@@ -594,6 +680,457 @@ class ApiController extends ResourceController
             try {
                 return $db->query("SELECT * FROM huls_audit_logs ORDER BY created_at DESC, id DESC LIMIT 40")->getResultArray();
             } catch (\Throwable $e) {}
+        }
+        return [];
+    }
+
+    // =========================================================================
+    // RENLAK (RENCANA PELAKSANAAN / KEGIATAN LABORATORIUM) HELPERS & SEEDER
+    // =========================================================================
+    private function getDefaultRenlakSeedData(): array
+    {
+        $now = '2026-10-29 08:00:00';
+        return [
+            [
+                'id'                   => 1,
+                'nomor_urut'           => '1',
+                'kategori'             => 'Perencanaan',
+                'nama_kegiatan'        => 'Pembentukan Tim Digitalisasi LAB',
+                'rencana_kegiatan'     => 'Penyusunan dan penetapan SK Tim Transformasi Digitalisasi Laboratorium BBPOM di Bandung.',
+                'realisasi'            => 1,
+                'target'               => 1,
+                'satuan'               => 'SK',
+                'persentase_capaian'   => 100.00,
+                'tahun_mulai'          => 2026,
+                'tahun_selesai'        => 2027,
+                'status_kegiatan'      => 'Selesai',
+                'pic_penanggung_jawab' => 'Manajer Puncak & Tim Manajemen',
+                'catatan_evaluasi'     => 'SK Tim Digitalisasi Lab telah diterbitkan.',
+                'jadwal_rencana'       => ['2026-09-1' => 1],
+                'jadwal_realisasi'     => ['2026-10-4' => 1],
+                'created_by'           => 'Admin Lab',
+                'updated_by'           => 'Admin Lab',
+                'created_at'           => $now,
+                'updated_at'           => $now,
+            ],
+            [
+                'id'                   => 2,
+                'nomor_urut'           => '2',
+                'kategori'             => 'Perencanaan',
+                'nama_kegiatan'        => 'Penyusunan Program Kerja Tim Digitalisasi LAB',
+                'rencana_kegiatan'     => 'Penyusunan dokumen roadmap dan rencana aksi pelaksanaan digitalisasi laboratorium 2026-2027.',
+                'realisasi'            => 1,
+                'target'               => 1,
+                'satuan'               => 'Dokumen',
+                'persentase_capaian'   => 100.00,
+                'tahun_mulai'          => 2026,
+                'tahun_selesai'        => 2027,
+                'status_kegiatan'      => 'Selesai',
+                'pic_penanggung_jawab' => 'Koordinator Perencanaan Lab',
+                'catatan_evaluasi'     => 'Dokumen Program Kerja Tim Digitalisasi Lab telah disahkan.',
+                'jadwal_rencana'       => ['2026-10-4' => 1],
+                'jadwal_realisasi'     => ['2026-10-4' => 1],
+                'created_by'           => 'Admin Lab',
+                'updated_by'           => 'Admin Lab',
+                'created_at'           => $now,
+                'updated_at'           => $now,
+            ],
+            [
+                'id'                   => 3,
+                'nomor_urut'           => '4',
+                'kategori'             => 'Pengembangan Digitalisasi LAB',
+                'nama_kegiatan'        => 'Pengembangan DATA BASE Fitur Digitalisasi LAB',
+                'rencana_kegiatan'     => 'Perancangan dan pembangunan skema database terintegrasi untuk seluruh fitur modul Digitalisasi Lab.',
+                'realisasi'            => 2,
+                'target'               => 6,
+                'satuan'               => 'Database',
+                'persentase_capaian'   => 33.33,
+                'tahun_mulai'          => 2026,
+                'tahun_selesai'        => 2027,
+                'status_kegiatan'      => 'Berjalan',
+                'pic_penanggung_jawab' => 'Tim TI & Database Lab',
+                'catatan_evaluasi'     => '2 modul database (IoT & HULS/Renlak) telah selesai; 4 modul tahap berikutnya terjadwal.',
+                'jadwal_rencana'       => [
+                    '2026-10-4' => 2,
+                    '2026-11-3' => 1,
+                    '2027-03-3' => 1,
+                    '2027-06-2' => 1,
+                    '2027-09-1' => 1,
+                ],
+                'jadwal_realisasi'     => [
+                    '2026-10-4' => 2,
+                ],
+                'created_by'           => 'Admin Lab',
+                'updated_by'           => 'Admin Lab',
+                'created_at'           => $now,
+                'updated_at'           => $now,
+            ],
+            [
+                'id'                   => 4,
+                'nomor_urut'           => '5',
+                'kategori'             => 'Pengembangan Digitalisasi LAB',
+                'nama_kegiatan'        => 'Pengembangan Aplikasi Digitalisasi LAB',
+                'rencana_kegiatan'     => 'Pengembangan platform utama portal web Digitalisasi Laboratorium BBPOM di Bandung (DigitLab BDG).',
+                'realisasi'            => 1,
+                'target'               => 2,
+                'satuan'               => 'Aplikasi',
+                'persentase_capaian'   => 50.00,
+                'tahun_mulai'          => 2026,
+                'tahun_selesai'        => 2027,
+                'status_kegiatan'      => 'Berjalan',
+                'pic_penanggung_jawab' => 'Tim Pengembang Aplikasi',
+                'catatan_evaluasi'     => 'Rilis tahap 1 aplikasi web DigitLab BDG telah berjalan.',
+                'jadwal_rencana'       => [
+                    '2026-10-2' => 1,
+                    '2027-06-2' => 1,
+                ],
+                'jadwal_realisasi'     => [
+                    '2026-10-4' => 1,
+                ],
+                'created_by'           => 'Admin Lab',
+                'updated_by'           => 'Admin Lab',
+                'created_at'           => $now,
+                'updated_at'           => $now,
+            ],
+            [
+                'id'                   => 5,
+                'nomor_urut'           => '6',
+                'kategori'             => 'Pengembangan Digitalisasi LAB',
+                'nama_kegiatan'        => 'Pengembangan Aplikasi Digitalisasi LAB - Fitur Akomodasi Lingkungan (IoT)',
+                'rencana_kegiatan'     => 'Integrasi sensor suhu, kelembapan, kualitas udara, saklar cahaya otomatis, dan laporan resmi BBPOM.',
+                'realisasi'            => 1,
+                'target'               => 1,
+                'satuan'               => 'Fitur',
+                'persentase_capaian'   => 100.00,
+                'tahun_mulai'          => 2026,
+                'tahun_selesai'        => 2027,
+                'status_kegiatan'      => 'Selesai',
+                'pic_penanggung_jawab' => 'Tim IoT & Sarpras Lab',
+                'catatan_evaluasi'     => 'Fitur monitoring IoT dan cetak PDF resmi 3 halaman selesai 100%.',
+                'jadwal_rencana'       => [
+                    '2026-10-4' => 1,
+                ],
+                'jadwal_realisasi'     => [
+                    '2026-10-4' => 1,
+                ],
+                'created_by'           => 'Admin Lab',
+                'updated_by'           => 'Admin Lab',
+                'created_at'           => $now,
+                'updated_at'           => $now,
+            ],
+            [
+                'id'                   => 6,
+                'nomor_urut'           => '7',
+                'kategori'             => 'Pengembangan Digitalisasi LAB',
+                'nama_kegiatan'        => 'Pengembangan Aplikasi Digitalisasi LAB - Fitur Pelaksanaan Pengujian dan LIMS',
+                'rencana_kegiatan'     => 'Pengembangan sub-modul pengelolaan sampel, status pengujian, integrasi LIMS, reagen, pengesahan, dan HULS.',
+                'realisasi'            => 0,
+                'target'               => 2,
+                'satuan'               => 'Fitur',
+                'persentase_capaian'   => 0.00,
+                'tahun_mulai'          => 2026,
+                'tahun_selesai'        => 2027,
+                'status_kegiatan'      => 'Belum Dimulai',
+                'pic_penanggung_jawab' => 'Tim Pengujian & LIMS',
+                'catatan_evaluasi'     => 'Terjadwal pada November dan Desember 2026.',
+                'jadwal_rencana'       => [
+                    '2026-11-2' => 1,
+                    '2026-12-3' => 1,
+                ],
+                'jadwal_realisasi'     => [],
+                'created_by'           => 'Admin Lab',
+                'updated_by'           => 'Admin Lab',
+                'created_at'           => $now,
+                'updated_at'           => $now,
+            ],
+            [
+                'id'                   => 7,
+                'nomor_urut'           => '8',
+                'kategori'             => 'Pengembangan Digitalisasi LAB',
+                'nama_kegiatan'        => 'Pengembangan Aplikasi Digitalisasi LAB - Fitur Keamanan dan Integritas Data LAB',
+                'rencana_kegiatan'     => 'Implementasi audit trail, kontrol akses berbasis peran, dan proteksi integritas rekaman laboratorium.',
+                'realisasi'            => 0,
+                'target'               => 1,
+                'satuan'               => 'Fitur',
+                'persentase_capaian'   => 0.00,
+                'tahun_mulai'          => 2026,
+                'tahun_selesai'        => 2027,
+                'status_kegiatan'      => 'Belum Dimulai',
+                'pic_penanggung_jawab' => 'Tim Keamanan Informasi',
+                'catatan_evaluasi'     => 'Terjadwal pada Minggu ke-4 November 2026.',
+                'jadwal_rencana'       => [
+                    '2026-11-4' => 1,
+                ],
+                'jadwal_realisasi'     => [],
+                'created_by'           => 'Admin Lab',
+                'updated_by'           => 'Admin Lab',
+                'created_at'           => $now,
+                'updated_at'           => $now,
+            ],
+            [
+                'id'                   => 8,
+                'nomor_urut'           => '9',
+                'kategori'             => 'Pengembangan Digitalisasi LAB',
+                'nama_kegiatan'        => 'Pengembangan Aplikasi Digitalisasi LAB - Fitur Pengelolaan Instrumen, Inventori & Kalibrasi',
+                'rencana_kegiatan'     => 'Digitalisasi logbook instrumen, jadwal kalibrasi berkala, dan manajemen stok inventori laboratorium.',
+                'realisasi'            => 0,
+                'target'               => 3,
+                'satuan'               => 'Fitur',
+                'persentase_capaian'   => 0.00,
+                'tahun_mulai'          => 2026,
+                'tahun_selesai'        => 2027,
+                'status_kegiatan'      => 'Belum Dimulai',
+                'pic_penanggung_jawab' => 'Penyelia Instrumen & Kalibrasi',
+                'catatan_evaluasi'     => 'Terjadwal Desember 2026 s/d Februari 2027.',
+                'jadwal_rencana'       => [
+                    '2026-12-1' => 1,
+                    '2027-01-1' => 1,
+                    '2027-02-1' => 1,
+                ],
+                'jadwal_realisasi'     => [],
+                'created_by'           => 'Admin Lab',
+                'updated_by'           => 'Admin Lab',
+                'created_at'           => $now,
+                'updated_at'           => $now,
+            ],
+            [
+                'id'                   => 9,
+                'nomor_urut'           => '8',
+                'kategori'             => 'Pengembangan Digitalisasi LAB',
+                'nama_kegiatan'        => 'Pengembangan Aplikasi Digitalisasi LAB - Fitur Metode, Validasi, Mutu & Kompetensi SDM',
+                'rencana_kegiatan'     => 'Pengembangan repositori metode uji, verifikasi/validasi metode, jaminan mutu, dan matriks kompetensi analis.',
+                'realisasi'            => 0,
+                'target'               => 4,
+                'satuan'               => 'Fitur',
+                'persentase_capaian'   => 0.00,
+                'tahun_mulai'          => 2026,
+                'tahun_selesai'        => 2027,
+                'status_kegiatan'      => 'Belum Dimulai',
+                'pic_penanggung_jawab' => 'Manajer Mutu & SDM Lab',
+                'catatan_evaluasi'     => 'Terjadwal Desember 2026 s/d Maret 2027.',
+                'jadwal_rencana'       => [
+                    '2026-12-3' => 1,
+                    '2027-01-3' => 1,
+                    '2027-02-4' => 1,
+                    '2027-03-4' => 1,
+                ],
+                'jadwal_realisasi'     => [],
+                'created_by'           => 'Admin Lab',
+                'updated_by'           => 'Admin Lab',
+                'created_at'           => $now,
+                'updated_at'           => $now,
+            ],
+            [
+                'id'                   => 10,
+                'nomor_urut'           => '1',
+                'kategori'             => 'Monitoring dan Evaluasi',
+                'nama_kegiatan'        => 'Rekon Data, Monitoring dan Evaluasi DIGITLAB',
+                'rencana_kegiatan'     => 'Rekonsiliasi data bulanan serta evaluasi berkala efektivitas implementasi sistem DigitLab BDG.',
+                'realisasi'            => 0,
+                'target'               => 11,
+                'satuan'               => 'Persen',
+                'persentase_capaian'   => 0.00,
+                'tahun_mulai'          => 2026,
+                'tahun_selesai'        => 2027,
+                'status_kegiatan'      => 'Belum Dimulai',
+                'pic_penanggung_jawab' => 'Tim Monev Digitalisasi Lab',
+                'catatan_evaluasi'     => 'Pelaksanaan rutin setiap bulan mulai November 2026 s/d September 2027.',
+                'jadwal_rencana'       => [
+                    '2026-11-1' => 1,
+                    '2026-12-1' => 1,
+                    '2026-12-4' => 1,
+                    '2027-01-2' => 1,
+                    '2027-02-2' => 1,
+                    '2027-03-3' => 1,
+                    '2027-04-3' => 1,
+                    '2027-05-3' => 1,
+                    '2027-06-4' => 1,
+                    '2027-07-4' => 1,
+                    '2027-09-1' => 1,
+                ],
+                'jadwal_realisasi'     => [],
+                'created_by'           => 'Admin Lab',
+                'updated_by'           => 'Admin Lab',
+                'created_at'           => $now,
+                'updated_at'           => $now,
+            ],
+            [
+                'id'                   => 11,
+                'nomor_urut'           => '2',
+                'kategori'             => 'Monitoring dan Evaluasi',
+                'nama_kegiatan'        => 'Tinjau Ulang Manajemen DIGITLAB',
+                'rencana_kegiatan'     => 'Rapat Tinjauan Manajemen (RTM) khusus evaluasi capaian indikator dan keberlanjutan inovasi DigitLab.',
+                'realisasi'            => 0,
+                'target'               => 1,
+                'satuan'               => 'Persen',
+                'persentase_capaian'   => 0.00,
+                'tahun_mulai'          => 2026,
+                'tahun_selesai'        => 2027,
+                'status_kegiatan'      => 'Belum Dimulai',
+                'pic_penanggung_jawab' => 'Manajer Puncak & Seluruh Penyelia',
+                'catatan_evaluasi'     => 'Terjadwal pada Januari 2027 Minggu ke-1.',
+                'jadwal_rencana'       => [
+                    '2027-01-1' => 1,
+                ],
+                'jadwal_realisasi'     => [],
+                'created_by'           => 'Admin Lab',
+                'updated_by'           => 'Admin Lab',
+                'created_at'           => $now,
+                'updated_at'           => $now,
+            ],
+        ];
+    }
+
+    private function ensureRenlakTables($db): bool
+    {
+        try {
+            $db->query("
+                CREATE TABLE IF NOT EXISTS `renlak_activities` (
+                    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    `nomor_urut` VARCHAR(20) DEFAULT '1',
+                    `kategori` VARCHAR(150) NOT NULL DEFAULT 'Perencanaan',
+                    `nama_kegiatan` VARCHAR(255) NOT NULL,
+                    `rencana_kegiatan` TEXT DEFAULT NULL,
+                    `realisasi` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+                    `target` DECIMAL(10,2) NOT NULL DEFAULT 1.00,
+                    `satuan` VARCHAR(60) NOT NULL DEFAULT 'Dokumen',
+                    `persentase_capaian` DECIMAL(6,2) NOT NULL DEFAULT 0.00,
+                    `tahun_mulai` INT NOT NULL DEFAULT 2026,
+                    `tahun_selesai` INT NOT NULL DEFAULT 2027,
+                    `status_kegiatan` VARCHAR(50) NOT NULL DEFAULT 'Belum Dimulai',
+                    `pic_penanggung_jawab` VARCHAR(120) DEFAULT 'Tim Digitalisasi Lab',
+                    `catatan_evaluasi` TEXT DEFAULT NULL,
+                    `jadwal_rencana_json` LONGTEXT DEFAULT NULL,
+                    `jadwal_realisasi_json` LONGTEXT DEFAULT NULL,
+                    `created_by` VARCHAR(100) DEFAULT 'Admin Lab',
+                    `updated_by` VARCHAR(100) DEFAULT 'Admin Lab',
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            ");
+            $db->query("
+                CREATE TABLE IF NOT EXISTS `renlak_audit_logs` (
+                    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    `renlak_id` INT UNSIGNED NOT NULL DEFAULT 0,
+                    `nama_kegiatan` VARCHAR(255) DEFAULT NULL,
+                    `action` VARCHAR(100) NOT NULL,
+                    `actor_name` VARCHAR(100) DEFAULT NULL,
+                    `actor_role` VARCHAR(100) DEFAULT NULL,
+                    `notes` TEXT DEFAULT NULL,
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            ");
+
+            // Seed initial 11 activities from Excel reference if table is completely empty
+            $cntRow = $db->query("SELECT COUNT(*) AS cnt FROM renlak_activities")->getRow();
+            if ($cntRow && (int)$cntRow->cnt === 0) {
+                $seeds = $this->getDefaultRenlakSeedData();
+                foreach ($seeds as $s) {
+                    $db->query("
+                        INSERT INTO renlak_activities
+                        (nomor_urut, kategori, nama_kegiatan, rencana_kegiatan, realisasi, target, satuan, persentase_capaian, tahun_mulai, tahun_selesai, status_kegiatan, pic_penanggung_jawab, catatan_evaluasi, jadwal_rencana_json, jadwal_realisasi_json, created_by, updated_by, created_at, updated_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ", [
+                        $s['nomor_urut'], $s['kategori'], $s['nama_kegiatan'], $s['rencana_kegiatan'],
+                        $s['realisasi'], $s['target'], $s['satuan'], $s['persentase_capaian'],
+                        $s['tahun_mulai'], $s['tahun_selesai'], $s['status_kegiatan'],
+                        $s['pic_penanggung_jawab'], $s['catatan_evaluasi'],
+                        json_encode($s['jadwal_rencana'], JSON_UNESCAPED_UNICODE),
+                        json_encode($s['jadwal_realisasi'], JSON_UNESCAPED_UNICODE),
+                        $s['created_by'], $s['updated_by'], $s['created_at'], $s['updated_at']
+                    ]);
+                }
+                $db->query("
+                    INSERT INTO renlak_audit_logs (renlak_id, nama_kegiatan, action, actor_name, actor_role, notes, created_at)
+                    VALUES (0, 'Inisialisasi Sistem RENLAK', 'SEED_INITIAL', 'System', 'Administrator', 'Memuat 11 kegiatan awal sesuai matriks Excel RENLAK 2026-2027', ?)
+                ", [date('Y-m-d H:i:s')]);
+            }
+            return true;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    private function getRenlakActivitiesList($db): array
+    {
+        if ($this->ensureRenlakTables($db)) {
+            try {
+                $rows = $db->query("SELECT * FROM renlak_activities ORDER BY id ASC")->getResultArray();
+                $result = [];
+                foreach ($rows as $r) {
+                    $r['id']                 = (int)$r['id'];
+                    $r['realisasi']          = (float)$r['realisasi'];
+                    $r['target']             = (float)$r['target'];
+                    $r['persentase_capaian'] = $r['target'] > 0 ? round(($r['realisasi'] / $r['target']) * 100, 2) : 0.0;
+                    $r['tahun_mulai']        = (int)($r['tahun_mulai'] ?? 2026);
+                    $r['tahun_selesai']      = (int)($r['tahun_selesai'] ?? 2027);
+                    $r['jadwal_rencana']     = json_decode($r['jadwal_rencana_json'] ?? '{}', true) ?: [];
+                    $r['jadwal_realisasi']   = json_decode($r['jadwal_realisasi_json'] ?? '{}', true) ?: [];
+                    unset($r['jadwal_rencana_json'], $r['jadwal_realisasi_json']);
+                    $result[] = $r;
+                }
+                return $result;
+            } catch (\Throwable $e) {}
+        }
+
+        // Fallback 1: spbe_json_store
+        try {
+            $q = $db->query("SELECT json_data FROM spbe_json_store WHERE key_name = 'renlak_activities_store'");
+            $row = $q->getRow();
+            if ($row && $row->json_data) {
+                $decoded = json_decode($row->json_data, true);
+                if (is_array($decoded) && count($decoded) > 0) {
+                    return $decoded;
+                }
+            }
+        } catch (\Throwable $e) {}
+
+        // Fallback 2: local writable JSON file
+        $fileFallback = WRITEPATH . 'renlak_store.json';
+        if (is_file($fileFallback)) {
+            $raw = @file_get_contents($fileFallback);
+            $decoded = $raw ? json_decode($raw, true) : null;
+            if (is_array($decoded) && isset($decoded['activities'])) {
+                return $decoded['activities'];
+            }
+        }
+
+        return $this->getDefaultRenlakSeedData();
+    }
+
+    private function saveRenlakFallbackStore($db, array $activities, array $auditLogs): void
+    {
+        $jsonActs = json_encode(array_values($activities), JSON_UNESCAPED_UNICODE);
+        try {
+            $q = $db->query("SELECT key_name FROM spbe_json_store WHERE key_name = 'renlak_activities_store'");
+            if ($q->getRow()) {
+                $db->query("UPDATE spbe_json_store SET json_data = ? WHERE key_name = 'renlak_activities_store'", [$jsonActs]);
+            } else {
+                $db->query("INSERT INTO spbe_json_store (key_name, json_data) VALUES ('renlak_activities_store', ?)", [$jsonActs]);
+            }
+        } catch (\Throwable $e) {}
+
+        $fileFallback = WRITEPATH . 'renlak_store.json';
+        @file_put_contents($fileFallback, json_encode([
+            'activities' => array_values($activities),
+            'audit_logs' => array_slice($auditLogs, 0, 60)
+        ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+    }
+
+    private function getRenlakAuditLogs($db): array
+    {
+        if ($this->ensureRenlakTables($db)) {
+            try {
+                return $db->query("SELECT * FROM renlak_audit_logs ORDER BY created_at DESC, id DESC LIMIT 50")->getResultArray();
+            } catch (\Throwable $e) {}
+        }
+        $fileFallback = WRITEPATH . 'renlak_store.json';
+        if (is_file($fileFallback)) {
+            $raw = @file_get_contents($fileFallback);
+            $decoded = $raw ? json_decode($raw, true) : null;
+            if (is_array($decoded) && isset($decoded['audit_logs'])) {
+                return $decoded['audit_logs'];
+            }
         }
         return [];
     }
@@ -918,6 +1455,331 @@ class ApiController extends ResourceController
                 'message' => 'Dokumen HULS berhasil dihapus.',
                 'documents' => $this->getHulsDocumentsList($db),
                 'audit_logs' => $this->getHulsAuditLogs($db)
+            ]);
+        }
+
+        // =====================================================================
+        // SAVE (CREATE / UPDATE) RENLAK ACTIVITY
+        // =====================================================================
+        if ($key === 'saveRenlakActivity') {
+            $payload = json_decode(json_encode($json), true) ?: [];
+
+            $namaKegiatan = trim((string)($payload['nama_kegiatan'] ?? ''));
+            $kategori     = trim((string)($payload['kategori'] ?? 'Perencanaan'));
+            if ($namaKegiatan === '' || $kategori === '') {
+                return $this->failValidationErrors('Nama Kegiatan/Sasaran dan Kategori wajib diisi.');
+            }
+
+            $nomorUrut       = trim((string)($payload['nomor_urut'] ?? '1'));
+            $rencanaKegiatan = trim((string)($payload['rencana_kegiatan'] ?? ''));
+            $realisasi       = isset($payload['realisasi']) ? max(0, (float)$payload['realisasi']) : 0.0;
+            $target          = isset($payload['target']) ? max(0, (float)$payload['target']) : 1.0;
+            $satuan          = trim((string)($payload['satuan'] ?? 'Dokumen')) ?: 'Dokumen';
+            $capaian         = $target > 0 ? round(($realisasi / $target) * 100, 2) : 0.0;
+            $tahunMulai      = isset($payload['tahun_mulai']) ? (int)$payload['tahun_mulai'] : 2026;
+            $tahunSelesai    = isset($payload['tahun_selesai']) ? (int)$payload['tahun_selesai'] : 2027;
+            if ($tahunSelesai < $tahunMulai) {
+                $tahunSelesai = $tahunMulai;
+            }
+
+            $pic             = trim((string)($payload['pic_penanggung_jawab'] ?? 'Tim Digitalisasi Lab'));
+            $catatan         = trim((string)($payload['catatan_evaluasi'] ?? ''));
+            $jadwalRencana   = is_array($payload['jadwal_rencana'] ?? null) ? $payload['jadwal_rencana'] : [];
+            $jadwalRealisasi = is_array($payload['jadwal_realisasi'] ?? null) ? $payload['jadwal_realisasi'] : [];
+
+            // Clean zero/empty schedule keys
+            $cleanRencana = [];
+            foreach ($jadwalRencana as $wk => $val) {
+                $numVal = (float)$val;
+                if ($numVal > 0) {
+                    $cleanRencana[$wk] = $numVal;
+                }
+            }
+            $cleanRealisasi = [];
+            foreach ($jadwalRealisasi as $wk => $val) {
+                $numVal = (float)$val;
+                if ($numVal > 0) {
+                    $cleanRealisasi[$wk] = $numVal;
+                }
+            }
+
+            // Determine status automatically or honor manual status
+            $statusReq = trim((string)($payload['status_kegiatan'] ?? ''));
+            if ($statusReq === 'Otomatis' || $statusReq === '') {
+                if ($target > 0 && $realisasi >= $target) {
+                    $statusKegiatan = 'Selesai';
+                } elseif ($realisasi > 0) {
+                    $statusKegiatan = 'Berjalan';
+                } else {
+                    $statusKegiatan = 'Belum Dimulai';
+                }
+            } else {
+                $statusKegiatan = $statusReq;
+            }
+
+            $session   = session();
+            $actorName = $session->get('userName') ?: ($payload['actor_name'] ?? 'Admin Lab');
+            $actorRole = $session->get('userRole') ?: ($payload['actor_role'] ?? 'Administrator');
+            $now       = date('Y-m-d H:i:s');
+            $actId     = isset($payload['id']) ? (int)$payload['id'] : 0;
+
+            if ($this->ensureRenlakTables($db)) {
+                try {
+                    if ($actId > 0) {
+                        $existing = $db->query("SELECT id FROM renlak_activities WHERE id = ?", [$actId])->getRow();
+                        if ($existing) {
+                            $db->query("
+                                UPDATE renlak_activities SET
+                                    nomor_urut = ?,
+                                    kategori = ?,
+                                    nama_kegiatan = ?,
+                                    rencana_kegiatan = ?,
+                                    realisasi = ?,
+                                    target = ?,
+                                    satuan = ?,
+                                    persentase_capaian = ?,
+                                    tahun_mulai = ?,
+                                    tahun_selesai = ?,
+                                    status_kegiatan = ?,
+                                    pic_penanggung_jawab = ?,
+                                    catatan_evaluasi = ?,
+                                    jadwal_rencana_json = ?,
+                                    jadwal_realisasi_json = ?,
+                                    updated_by = ?,
+                                    updated_at = ?
+                                WHERE id = ?
+                            ", [
+                                $nomorUrut, $kategori, $namaKegiatan, $rencanaKegiatan,
+                                $realisasi, $target, $satuan, $capaian,
+                                $tahunMulai, $tahunSelesai, $statusKegiatan,
+                                $pic, $catatan,
+                                json_encode($cleanRencana, JSON_UNESCAPED_UNICODE),
+                                json_encode($cleanRealisasi, JSON_UNESCAPED_UNICODE),
+                                $actorName, $now, $actId
+                            ]);
+
+                            $notes = "Memperbarui kegiatan '{$namaKegiatan}' (Realisasi: {$realisasi}/{$target} {$satuan} = {$capaian}%, Status: {$statusKegiatan})";
+                            $db->query("
+                                INSERT INTO renlak_audit_logs (renlak_id, nama_kegiatan, action, actor_name, actor_role, notes, created_at)
+                                VALUES (?, ?, 'UPDATE_KEGIATAN', ?, ?, ?, ?)
+                            ", [$actId, $namaKegiatan, $actorName, $actorRole, $notes, $now]);
+                        } else {
+                            $actId = 0;
+                        }
+                    }
+
+                    if ($actId === 0) {
+                        $db->query("
+                            INSERT INTO renlak_activities
+                            (nomor_urut, kategori, nama_kegiatan, rencana_kegiatan, realisasi, target, satuan, persentase_capaian, tahun_mulai, tahun_selesai, status_kegiatan, pic_penanggung_jawab, catatan_evaluasi, jadwal_rencana_json, jadwal_realisasi_json, created_by, updated_by, created_at, updated_at)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        ", [
+                            $nomorUrut, $kategori, $namaKegiatan, $rencanaKegiatan,
+                            $realisasi, $target, $satuan, $capaian,
+                            $tahunMulai, $tahunSelesai, $statusKegiatan,
+                            $pic, $catatan,
+                            json_encode($cleanRencana, JSON_UNESCAPED_UNICODE),
+                            json_encode($cleanRealisasi, JSON_UNESCAPED_UNICODE),
+                            $actorName, $actorName, $now, $now
+                        ]);
+                        $actId = (int)$db->insertID();
+                        $notes = "Menambahkan kegiatan baru '{$namaKegiatan}' pada kategori {$kategori} (Target: {$target} {$satuan})";
+                        $db->query("
+                            INSERT INTO renlak_audit_logs (renlak_id, nama_kegiatan, action, actor_name, actor_role, notes, created_at)
+                            VALUES (?, ?, 'CREATE_KEGIATAN', ?, ?, ?, ?)
+                        ", [$actId, $namaKegiatan, $actorName, $actorRole, $notes, $now]);
+                    }
+                } catch (\Throwable $e) {}
+            }
+
+            // Also update fallback store
+            $allList = $this->getRenlakActivitiesList($db);
+            $logsList = $this->getRenlakAuditLogs($db);
+            $this->saveRenlakFallbackStore($db, $allList, $logsList);
+
+            return $this->respond([
+                'status'     => 'success',
+                'message'    => 'Data kegiatan RENLAK berhasil disimpan.',
+                'id'         => $actId,
+                'activities' => $allList,
+                'audit_logs' => $logsList
+            ]);
+        }
+
+        // =====================================================================
+        // TOGGLE / UPDATE WEEK CELL IN RENLAK TIMELINE GANTT
+        // =====================================================================
+        if ($key === 'toggleRenlakWeekCell') {
+            $payload = json_decode(json_encode($json), true) ?: [];
+            $actId   = isset($payload['id']) ? (int)$payload['id'] : 0;
+            $type    = ($payload['type'] ?? 'rencana') === 'realisasi' ? 'realisasi' : 'rencana';
+            $weekKey = trim((string)($payload['week_key'] ?? ''));
+            $val     = isset($payload['value']) ? (float)$payload['value'] : 0.0;
+            $syncSum = !empty($payload['sync_sum']);
+
+            if ($actId <= 0 || $weekKey === '') {
+                return $this->failValidationErrors('Parameter jadwal tidak valid.');
+            }
+
+            $session   = session();
+            $actorName = $session->get('userName') ?: 'Admin Lab';
+            $actorRole = $session->get('userRole') ?: 'Administrator';
+            $now       = date('Y-m-d H:i:s');
+
+            if ($this->ensureRenlakTables($db)) {
+                try {
+                    $row = $db->query("SELECT * FROM renlak_activities WHERE id = ?", [$actId])->getRowArray();
+                    if ($row) {
+                        $jRencana   = json_decode($row['jadwal_rencana_json'] ?? '{}', true) ?: [];
+                        $jRealisasi = json_decode($row['jadwal_realisasi_json'] ?? '{}', true) ?: [];
+
+                        if ($type === 'rencana') {
+                            if ($val > 0) {
+                                $jRencana[$weekKey] = $val;
+                            } else {
+                                unset($jRencana[$weekKey]);
+                            }
+                        } else {
+                            if ($val > 0) {
+                                $jRealisasi[$weekKey] = $val;
+                            } else {
+                                unset($jRealisasi[$weekKey]);
+                            }
+                        }
+
+                        $realisasi = (float)$row['realisasi'];
+                        $target    = (float)$row['target'];
+                        if ($syncSum && $type === 'realisasi') {
+                            $realisasi = array_sum(array_map('floatval', $jRealisasi));
+                        }
+                        $capaian = $target > 0 ? round(($realisasi / $target) * 100, 2) : 0.0;
+                        $statusKegiatan = $row['status_kegiatan'];
+                        if ($target > 0 && $realisasi >= $target) {
+                            $statusKegiatan = 'Selesai';
+                        } elseif ($realisasi > 0 && $statusKegiatan === 'Belum Dimulai') {
+                            $statusKegiatan = 'Berjalan';
+                        }
+
+                        $db->query("
+                            UPDATE renlak_activities SET
+                                realisasi = ?,
+                                persentase_capaian = ?,
+                                status_kegiatan = ?,
+                                jadwal_rencana_json = ?,
+                                jadwal_realisasi_json = ?,
+                                updated_by = ?,
+                                updated_at = ?
+                            WHERE id = ?
+                        ", [
+                            $realisasi, $capaian, $statusKegiatan,
+                            json_encode($jRencana, JSON_UNESCAPED_UNICODE),
+                            json_encode($jRealisasi, JSON_UNESCAPED_UNICODE),
+                            $actorName, $now, $actId
+                        ]);
+
+                        $labelType = $type === 'realisasi' ? 'Realisasi' : 'Rencana';
+                        $notes = "Mengubah jadwal {$labelType} [{$weekKey}] menjadi " . ($val > 0 ? $val : 'kosong') . " pada '{$row['nama_kegiatan']}'";
+                        $db->query("
+                            INSERT INTO renlak_audit_logs (renlak_id, nama_kegiatan, action, actor_name, actor_role, notes, created_at)
+                            VALUES (?, ?, 'UPDATE_JADWAL_TIMELINE', ?, ?, ?, ?)
+                        ", [$actId, $row['nama_kegiatan'], $actorName, $actorRole, $notes, $now]);
+                    }
+                } catch (\Throwable $e) {}
+            }
+
+            $allList  = $this->getRenlakActivitiesList($db);
+            $logsList = $this->getRenlakAuditLogs($db);
+            $this->saveRenlakFallbackStore($db, $allList, $logsList);
+
+            return $this->respond([
+                'status'     => 'success',
+                'message'    => 'Jadwal timeline berhasil diperbarui.',
+                'activities' => $allList,
+                'audit_logs' => $logsList
+            ]);
+        }
+
+        // =====================================================================
+        // DELETE RENLAK ACTIVITY
+        // =====================================================================
+        if ($key === 'deleteRenlakActivity') {
+            $actId = isset($json->id) ? (int)$json->id : 0;
+            if ($actId <= 0) {
+                return $this->failValidationErrors('ID Kegiatan RENLAK tidak valid.');
+            }
+            $session   = session();
+            $actorName = $session->get('userName') ?: 'Admin Lab';
+            $actorRole = $session->get('userRole') ?: 'Administrator';
+            $now       = date('Y-m-d H:i:s');
+
+            if ($this->ensureRenlakTables($db)) {
+                try {
+                    $row = $db->query("SELECT nama_kegiatan, kategori FROM renlak_activities WHERE id = ?", [$actId])->getRow();
+                    $namaKeg = $row ? $row->nama_kegiatan : ('#' . $actId);
+                    $db->query("DELETE FROM renlak_activities WHERE id = ?", [$actId]);
+                    $db->query("
+                        INSERT INTO renlak_audit_logs (renlak_id, nama_kegiatan, action, actor_name, actor_role, notes, created_at)
+                        VALUES (?, ?, 'DELETE_KEGIATAN', ?, ?, ?, ?)
+                    ", [$actId, $namaKeg, $actorName, $actorRole, "Menghapus kegiatan RENLAK '{$namaKeg}'", $now]);
+                } catch (\Throwable $e) {}
+            }
+
+            $allList  = $this->getRenlakActivitiesList($db);
+            $logsList = $this->getRenlakAuditLogs($db);
+            $this->saveRenlakFallbackStore($db, $allList, $logsList);
+
+            return $this->respond([
+                'status'     => 'success',
+                'message'    => 'Kegiatan RENLAK berhasil dihapus.',
+                'activities' => $allList,
+                'audit_logs' => $logsList
+            ]);
+        }
+
+        // =====================================================================
+        // RESET / RESTORE DEFAULT EXCEL RENLAK ACTIVITIES
+        // =====================================================================
+        if ($key === 'resetRenlakDefault') {
+            $session   = session();
+            $actorName = $session->get('userName') ?: 'Admin Lab';
+            $actorRole = $session->get('userRole') ?: 'Administrator';
+            $now       = date('Y-m-d H:i:s');
+
+            if ($this->ensureRenlakTables($db)) {
+                try {
+                    $db->query("TRUNCATE TABLE renlak_activities");
+                    $seeds = $this->getDefaultRenlakSeedData();
+                    foreach ($seeds as $s) {
+                        $db->query("
+                            INSERT INTO renlak_activities
+                            (nomor_urut, kategori, nama_kegiatan, rencana_kegiatan, realisasi, target, satuan, persentase_capaian, tahun_mulai, tahun_selesai, status_kegiatan, pic_penanggung_jawab, catatan_evaluasi, jadwal_rencana_json, jadwal_realisasi_json, created_by, updated_by, created_at, updated_at)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        ", [
+                            $s['nomor_urut'], $s['kategori'], $s['nama_kegiatan'], $s['rencana_kegiatan'],
+                            $s['realisasi'], $s['target'], $s['satuan'], $s['persentase_capaian'],
+                            $s['tahun_mulai'], $s['tahun_selesai'], $s['status_kegiatan'],
+                            $s['pic_penanggung_jawab'], $s['catatan_evaluasi'],
+                            json_encode($s['jadwal_rencana'], JSON_UNESCAPED_UNICODE),
+                            json_encode($s['jadwal_realisasi'], JSON_UNESCAPED_UNICODE),
+                            $actorName, $actorName, $now, $now
+                        ]);
+                    }
+                    $db->query("
+                        INSERT INTO renlak_audit_logs (renlak_id, nama_kegiatan, action, actor_name, actor_role, notes, created_at)
+                        VALUES (0, 'Reset Data Referensi Excel', 'RESET_DEFAULT', ?, ?, 'Mengembalikan 11 kegiatan awal sesuai referensi Excel RENLAK 2026-2027', ?)
+                    ", [$actorName, $actorRole, $now]);
+                } catch (\Throwable $e) {}
+            }
+
+            $allList  = $this->getRenlakActivitiesList($db);
+            $logsList = $this->getRenlakAuditLogs($db);
+            $this->saveRenlakFallbackStore($db, $allList, $logsList);
+
+            return $this->respond([
+                'status'     => 'success',
+                'message'    => 'Data kegiatan RENLAK dikembalikan ke referensi awal Excel.',
+                'activities' => $allList,
+                'audit_logs' => $logsList
             ]);
         }
 

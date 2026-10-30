@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Digitalisasi Lab — BBPOM di Bandung</title>
-    <link rel="icon" type="image/png" href="/logo-digitalisasi-lab.png">
+    <title>Login | DigitLab BDG — BBPOM di Bandung</title>
+    <link rel="icon" type="image/png" href="<?= base_url('favicon-digitlab-bdg.png') ?>"><link rel="shortcut icon" href="<?= base_url('favicon.ico') ?>"><link rel="apple-touch-icon" href="<?= base_url('favicon-digitlab-bdg.png') ?>">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -303,7 +303,7 @@
     <div class="login-card">
         <!-- Left Hero Panel (Exact Match to Design) -->
         <div class="login-hero">
-            <img src="<?= base_url('login-hero-left.png') ?>" alt="Selamat Datang di Digitalisasi Lab BBPOM di Bandung">
+            <img src="<?= base_url('login-hero-left.png') ?>?v=2" alt="Selamat Datang di DigitLab BDG - BBPOM di Bandung">
         </div>
 
         <!-- Right Login Form Panel (Without SSO BPOM as requested) -->
@@ -312,7 +312,7 @@
 
             <div>
                 <div class="brand-box">
-                    <img src="<?= base_url('logo-digitalisasi-lab.png') ?>" alt="Logo Digitalisasi Lab" class="brand-logo">
+                    <img src="<?= base_url('logo-digitlab-bdg.png') ?>" alt="Logo DigitLab BDG" class="brand-logo">
                     <div class="brand-subtitle">BBPOM DI BANDUNG</div>
                 </div>
 
@@ -342,7 +342,7 @@
                             <input type="checkbox" name="remember" checked>
                             <span>Ingat saya</span>
                         </label>
-                        <a href="javascript:void(0)" class="forgot-link" onclick="alert('Silakan hubungi Administrator Digitalisasi Lab BBPOM di Bandung untuk reset password.')">Lupa password?</a>
+                        <a href="javascript:void(0)" class="forgot-link" onclick="alert('Silakan hubungi Administrator DigitLab BDG - BBPOM di Bandung untuk reset password.')">Lupa password?</a>
                     </div>
 
                     <button type="submit" class="btn-login-submit">

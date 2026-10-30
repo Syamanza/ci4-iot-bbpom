@@ -4,9 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <title>Digitalisasi Lab | BBPOM di Bandung</title>
+    <title>DigitLab BDG | BBPOM di Bandung</title>
     
-    <link rel="icon" type="image/png" href="<?= base_url('logo-digitalisasi-lab.png') ?>">
+    <link rel="icon" type="image/png" href="<?= base_url('favicon-digitlab-bdg.png') ?>">
+    <link rel="shortcut icon" href="<?= base_url('favicon.ico') ?>">
+    <link rel="apple-touch-icon" href="<?= base_url('favicon-digitlab-bdg.png') ?>">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -951,7 +953,7 @@
     <aside class="digilab-sidebar" id="digilabSidebar">
         <div class="sidebar-brand-box">
             <div class="sidebar-logo-card">
-                <img src="<?= base_url('logo-digitalisasi-lab.png') ?>" alt="Logo Digitalisasi Lab">
+                <img src="<?= base_url('logo-digitlab-bdg.png') ?>" alt="Logo DigitLab BDG">
             </div>
             <div class="sidebar-brand-sub">BBPOM DI BANDUNG</div>
         </div>
@@ -1060,7 +1062,7 @@
                     <i class="ti ti-menu-2 fs-5"></i>
                 </button>
                 <div class="topbar-title-wrap">
-                    <span id="topbarActiveTitle">Digitalisasi Lab Terintegrasi</span>
+                    <span id="topbarActiveTitle">DigitLab BDG</span>
                 </div>
             </div>
 
@@ -1098,372 +1100,602 @@
         <div class="digilab-content">
 
             <!-- ==========================================================
-                 SECTION 1: MENU DASHBOARD UTAMA (DATA DUMMY SESUAI REQUEST)
+                 SECTION 1: MENU DASHBOARD UTAMA (MINIMALIST ENTERPRISE UI)
                  ========================================================== -->
             <div id="section-dashboard">
+                <style>
+                    /* Minimalist & Modern Dashboard Styles */
+                    .dash-page-header {
+                        padding: 4px 0 16px 0;
+                        margin-bottom: 8px;
+                        border-bottom: 1px solid #eef2f6;
+                    }
+                    .dash-stat-strip {
+                        background: #ffffff;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 10px;
+                        padding: 14px 18px;
+                        margin-bottom: 16px;
+                    }
+                    .dash-stat-col {
+                        position: relative;
+                    }
+                    @media (min-width: 768px) {
+                        .dash-stat-col:not(:last-child)::after {
+                            content: '';
+                            position: absolute;
+                            right: 0;
+                            top: 15%;
+                            height: 70%;
+                            width: 1px;
+                            background: #eef2f6;
+                        }
+                    }
+                    .dash-stat-label {
+                        font-size: 0.72rem;
+                        font-weight: 600;
+                        color: #64748b;
+                        text-transform: uppercase;
+                        letter-spacing: 0.4px;
+                        margin-bottom: 2px;
+                    }
+                    .dash-stat-value {
+                        font-size: 1.35rem;
+                        font-weight: 700;
+                        color: #0f172a;
+                        line-height: 1.2;
+                    }
+                    .dash-card {
+                        background: #ffffff;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 10px;
+                        overflow: hidden;
+                        margin-bottom: 16px;
+                    }
+                    .dash-card-header {
+                        padding: 12px 18px;
+                        background: #f8fafc;
+                        border-bottom: 1px solid #e2e8f0;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        flex-wrap: wrap;
+                        gap: 8px;
+                    }
+                    /* Modernized Minimalist Data Table */
+                    .dash-table-container {
+                        overflow-x: auto;
+                        position: relative;
+                    }
+                    .dash-data-table {
+                        width: max-content;
+                        min-width: 100%;
+                        border-collapse: collapse;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+                        font-size: 11.5px;
+                        color: #1e293b;
+                    }
+                    .dash-data-table th,
+                    .dash-data-table td {
+                        border: 1px solid #e2e8f0;
+                        padding: 7px 9px;
+                        vertical-align: middle;
+                    }
+                    .dash-data-table thead th {
+                        background: #f8fafc;
+                        color: #475569;
+                        font-weight: 600;
+                        font-size: 11px;
+                        text-align: center;
+                        white-space: nowrap;
+                    }
+                    .dash-sticky-col {
+                        position: sticky !important;
+                        left: 0;
+                        z-index: 8;
+                        background: #ffffff !important;
+                        width: 220px;
+                        min-width: 220px;
+                        max-width: 220px;
+                        font-weight: 500;
+                        border-right: 2px solid #cbd5e1 !important;
+                    }
+                    .dash-data-table thead .dash-sticky-col {
+                        z-index: 12 !important;
+                        background: #f1f5f9 !important;
+                        font-weight: 600;
+                    }
+                    .dash-sec-divider td {
+                        background: #f8fafc !important;
+                        font-weight: 700;
+                        color: #0f172a;
+                        font-size: 11px;
+                        letter-spacing: 0.3px;
+                        padding: 6px 10px;
+                        border-top: 1px solid #cbd5e1;
+                        border-bottom: 1px solid #cbd5e1;
+                    }
+                    .dash-sec-divider td.dash-sticky-col {
+                        background: #f8fafc !important;
+                    }
+                    .cell-target-subtle {
+                        background: #fefce8;
+                        color: #854d0e;
+                        font-weight: 600;
+                        text-align: right;
+                    }
+                    .cell-capaian-subtle {
+                        background: #f0fdf4;
+                        color: #15803d;
+                        font-weight: 600;
+                        text-align: center;
+                    }
+                    .dash-num-r {
+                        text-align: right;
+                        white-space: nowrap;
+                    }
+                    .dash-num-c {
+                        text-align: center;
+                        white-space: nowrap;
+                    }
+                    .dash-chip-link {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 5px;
+                        background: #f1f5f9;
+                        color: #334155;
+                        padding: 2px 8px;
+                        border-radius: 4px;
+                        font-size: 10.5px;
+                        text-decoration: none;
+                        max-width: 200px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        border: 1px solid #e2e8f0;
+                    }
+                    .dash-chip-link:hover {
+                        background: #e2e8f0;
+                        color: #034284;
+                    }
+                    .dash-sub-table {
+                        width: max-content;
+                        min-width: 100%;
+                        border-collapse: collapse;
+                        font-size: 11px;
+                        color: #475569;
+                    }
+                    .dash-sub-table th,
+                    .dash-sub-table td {
+                        border: 1px solid #e2e8f0;
+                        padding: 4px 7px;
+                    }
+                    .dash-sub-table th {
+                        background: #f8fafc;
+                        font-weight: 600;
+                        text-align: center;
+                    }
+                </style>
 
-                <!-- Greeting Banner -->
-                <div class="greeting-strip">
-                    <div>
-                        <span class="fs-5 me-1">👋</span>
-                        <strong style="color: #0f172a; font-size: 1.02rem;">Sampurasun, Akang/Teteh!</strong>
-                        <span class="text-muted mx-1">|</span>
-                        <span class="text-secondary fw-medium">Laboratorium Regional UPT BBPOM di Bandung (LP-173-IDN)</span>
-                    </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="badge bg-label-success"><i class="ti ti-circle-filled me-1" style="font-size: 7px;"></i>Sistem Digitalisasi Lab Online</span>
+                <!-- 1. TOP HEADER: MINIMALIST & PROFESSIONAL -->
+                <div class="dash-page-header">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                        <div>
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <h4 class="fw-bold mb-0 text-dark" style="letter-spacing: -0.3px; font-size: 1.25rem;">
+                                    Dashboard Kinerja Digitalisasi &amp; Pengujian
+                                </h4>
+                                <span class="badge bg-light text-secondary border fw-medium px-2 py-1" style="font-size: 0.72rem;">BBPOM di Bandung &bull; 2026</span>
+                            </div>
+                            <p class="text-muted mb-0 small">
+                                Pemantauan indikator maturitas digitalisasi, capaian IKU pengujian laboratorium, dan rekapitulasi sampel komoditi.
+                            </p>
+                        </div>
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <span class="badge bg-light text-secondary border fw-medium px-2 py-1 small">
+                                <i class="ti ti-calendar-event me-1"></i>Periode: <strong>1/1/2026</strong> &ndash; <strong>10/30/2026</strong>
+                            </span>
+                            <span class="badge bg-light text-primary border fw-semibold px-2 py-1 small">
+                                <i class="ti ti-clock me-1"></i>Sisa <strong>63</strong> Hari Kalender
+                            </span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- 1, 2, 3: KPI CARDS ROW (Jumlah Sampel Update, Jumlah Selesai Uji, Indeks Maturitas Digitalisasi Lab) -->
-                <div class="row g-3 mb-4">
-                    <!-- 1. Jumlah Sampel Update -->
-                    <div class="col-xl-3 col-md-6">
-                        <div class="kpi-stat-card">
-                            <div class="d-flex align-items-start gap-3">
-                                <div class="kpi-icon-box" style="background: #0284c7; color: #ffffff;">
-                                    <i class="ti ti-hierarchy-2"></i>
-                                </div>
-                                <div>
-                                    <div class="kpi-label">1. JUMLAH SAMPEL UPDATE</div>
-                                    <div class="kpi-number">1,240</div>
-                                    <div class="kpi-sub text-success">
-                                        <i class="ti ti-trending-up"></i> +12% dari bln lalu (48 hari ini)
-                                    </div>
-                                </div>
+                <!-- 2. STAT STRIP: 5 INDIKATOR UTAMA (SISA HARI, MATURITAS, IKU 1-3) -->
+                <div class="dash-stat-strip">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-6 col-md-4 col-xl-2 dash-stat-col">
+                            <div class="dash-stat-label">Sisa Hari Kalender</div>
+                            <div class="d-flex align-items-baseline gap-2">
+                                <span class="dash-stat-value text-primary">63</span>
+                                <small class="text-muted">Hari (Thn 2026)</small>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- 2. Jumlah Selesai Uji -->
-                    <div class="col-xl-3 col-md-6">
-                        <div class="kpi-stat-card">
-                            <div class="d-flex align-items-start gap-3">
-                                <div class="kpi-icon-box" style="background: #10b981; color: #ffffff;">
-                                    <i class="ti ti-circle-check"></i>
-                                </div>
-                                <div>
-                                    <div class="kpi-label">2. JUMLAH SELESAI UJI</div>
-                                    <div class="kpi-number">1,085</div>
-                                    <div class="kpi-sub" style="color: #059669;">
-                                        <i class="ti ti-checks"></i> 87.5% Selesai (Rata-rata SLA 3 hari)
-                                    </div>
-                                </div>
+                        <div class="col-6 col-md-4 col-xl-2 dash-stat-col">
+                            <div class="dash-stat-label">Indeks Maturitas Lab</div>
+                            <div class="d-flex align-items-baseline gap-2">
+                                <span class="dash-stat-value">85.00</span>
+                                <small class="text-muted">Target: 100</small>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- 3. Indeks Maturitas Digitalisasi Lab -->
-                    <div class="col-xl-3 col-md-6">
-                        <div class="kpi-stat-card">
-                            <div class="d-flex align-items-start gap-3">
-                                <div class="kpi-icon-box" style="background: #f59e0b; color: #ffffff;">
-                                    <i class="ti ti-award"></i>
-                                </div>
-                                <div>
-                                    <div class="kpi-label">3. INDEKS MATURITAS DIGITALISASI LAB</div>
-                                    <div class="kpi-number">4.25 <small class="fs-6 fw-semibold text-muted">/ 5.0</small></div>
-                                    <div class="kpi-sub" style="color: #d97706;">
-                                        <i class="ti ti-chart-bar"></i> Skor 85% (Level: Terintegrasi)
-                                    </div>
-                                </div>
+                        <div class="col-6 col-md-4 col-xl-3 dash-stat-col">
+                            <div class="dash-stat-label">IKU 1 &bull; Sediaan Farmasi</div>
+                            <div class="d-flex align-items-baseline gap-2">
+                                <span class="dash-stat-value text-success">99.25%</span>
+                                <small class="text-muted">Target: 98.54%</small>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Tambahan Ringkasan Antrean / Proses Uji -->
-                    <div class="col-xl-3 col-md-6">
-                        <div class="kpi-stat-card">
-                            <div class="d-flex align-items-start gap-3">
-                                <div class="kpi-icon-box" style="background: #ef4444; color: #ffffff;">
-                                    <i class="ti ti-clock-exclamation"></i>
-                                </div>
-                                <div>
-                                    <div class="kpi-label">DALAM PROSES &amp; VERIFIKASI</div>
-                                    <div class="kpi-number">155</div>
-                                    <div class="kpi-sub text-danger">
-                                        <i class="ti ti-Urgent"></i> 143 Sesuai SLA &bull; 12 Prioritas Segera
-                                    </div>
-                                </div>
+                        <div class="col-6 col-md-6 col-xl-3 dash-stat-col">
+                            <div class="dash-stat-label">IKU 2 &bull; Pangan Olahan</div>
+                            <div class="d-flex align-items-baseline gap-2">
+                                <span class="dash-stat-value text-success">97.24%</span>
+                                <small class="text-muted">Target: 95.98%</small>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-xl-2">
+                            <div class="dash-stat-label">IKU 3 &bull; Sampel KLB</div>
+                            <div class="d-flex align-items-baseline gap-2">
+                                <span class="dash-stat-value text-success">100.00%</span>
+                                <small class="text-muted">Target: 74%</small>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- CHARTS ROW: TREN SAMPEL UPDATE vs SELESAI UJI & DETAIL INDEKS MATURITAS DIGITALISASI LAB -->
-                <div class="row g-3 mb-4">
-                    <!-- Left: Grafik Tren Sampel Update & Selesai Uji per Komoditi -->
-                    <div class="col-lg-7">
-                        <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
-                            <div class="card-body p-4">
-                                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                                    <div>
-                                        <h6 class="fw-bold mb-1" style="color: #0f172a;">
-                                            <i class="ti ti-chart-bar text-primary me-1"></i> TREN JUMLAH SAMPEL UPDATE &amp; SELESAI UJI (2026)
-                                        </h6>
-                                        <small class="text-muted">Perbandingan sampel masuk/update dan sampel selesai uji per komoditi</small>
-                                    </div>
-                                    <span class="badge bg-label-primary fw-bold">Target SLA: 95%</span>
-                                </div>
-
-                                <div class="d-flex flex-wrap gap-3 mb-3 small fw-semibold">
-                                    <span><i class="ti ti-circle-filled me-1" style="color: #0284c7;"></i>Pangan</span>
-                                    <span><i class="ti ti-circle-filled me-1" style="color: #0d9488;"></i>Obat/NAPZA</span>
-                                    <span><i class="ti ti-circle-filled me-1" style="color: #eab308;"></i>Kosmetik</span>
-                                    <span><i class="ti ti-circle-filled me-1" style="color: #22c55e;"></i>OT &amp; Suplemen</span>
-                                    <span><i class="ti ti-circle-filled me-1" style="color: #8b5cf6;"></i>Mikrobiologi</span>
-                                </div>
-
-                                <div style="height: 255px;">
-                                    <canvas id="chartDashboardKomoditi"></canvas>
-                                </div>
-                            </div>
+                <!-- 3. CHART CARD: REKAPITULASI SAMPEL UJI -->
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <div>
+                            <h6 class="fw-bold mb-0 text-dark">
+                                <i class="ti ti-chart-bar me-1 text-primary"></i> Rekapitulasi Sampel Uji per Komoditi
+                            </h6>
+                            <small class="text-muted">Grafik batang bulanan sampel uji laboratorium BBPOM di Bandung (Target &amp; Realisasi Jan &ndash; Des)</small>
                         </div>
+                        <span class="badge bg-light text-secondary border fw-medium">Tahun 2026</span>
                     </div>
-
-                    <!-- Right: Detail Indeks Maturitas Digitalisasi Lab -->
-                    <div class="col-lg-5">
-                        <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
-                            <div class="card-body p-4">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <div>
-                                        <h6 class="fw-bold mb-1" style="color: #0f172a;">
-                                            <i class="ti ti-gauge text-warning me-1"></i> INDEKS MATURITAS DIGITALISASI LAB.
-                                        </h6>
-                                        <small class="text-muted">Capaian transformasi digital laboratorium BBPOM</small>
-                                    </div>
-                                    <span class="badge bg-label-success fw-bold fs-6">4.25 / 5.0 (85%)</span>
-                                </div>
-
-                                <!-- Pilar Maturitas Progress Bars -->
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between small fw-semibold mb-1">
-                                        <span>1. Akomodasi &amp; Lingkungan (Monitoring IoT)</span>
-                                        <span class="text-success fw-bold">92% (Level 4.6)</span>
-                                    </div>
-                                    <div class="progress" style="height: 8px; border-radius: 6px;">
-                                        <div class="progress-bar bg-success" style="width: 92%;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between small fw-semibold mb-1">
-                                        <span>2. Pelaksanaan Pengujian &amp; LIMS Terintegrasi</span>
-                                        <span class="text-primary fw-bold">88% (Level 4.4)</span>
-                                    </div>
-                                    <div class="progress" style="height: 8px; border-radius: 6px;">
-                                        <div class="progress-bar bg-primary" style="width: 88%;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between small fw-semibold mb-1">
-                                        <span>3. Keamanan &amp; Integritas Data Laboratorium</span>
-                                        <span class="text-info fw-bold">85% (Level 4.2)</span>
-                                    </div>
-                                    <div class="progress" style="height: 8px; border-radius: 6px;">
-                                        <div class="progress-bar bg-info" style="width: 85%;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between small fw-semibold mb-1">
-                                        <span>4. Pengelolaan Instrumen, Inventori &amp; Kalibrasi</span>
-                                        <span class="text-warning fw-bold">82% (Level 4.1)</span>
-                                    </div>
-                                    <div class="progress" style="height: 8px; border-radius: 6px;">
-                                        <div class="progress-bar bg-warning" style="width: 82%;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between small fw-semibold mb-1">
-                                        <span>5. Metode, Validasi, Mutu &amp; Kompetensi SDM</span>
-                                        <span style="color: #8b5cf6;" class="fw-bold">78% (Level 3.9)</span>
-                                    </div>
-                                    <div class="progress" style="height: 8px; border-radius: 6px;">
-                                        <div class="progress-bar" style="width: 78%; background-color: #8b5cf6;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="p-2 rounded border bg-light d-flex align-items-center justify-content-between mt-3">
-                                    <span class="small text-muted"><i class="ti ti-info-circle text-primary me-1"></i>Status Maturitas: <strong>Digital Lab Terintegrasi (ISO/IEC 17025)</strong></span>
-                                    <span class="badge bg-primary">Target 2026: 4.50</span>
-                                </div>
-                            </div>
+                    <div class="p-3">
+                        <div style="height: 250px; position: relative;">
+                            <canvas id="chartDashboardKomoditi"></canvas>
                         </div>
                     </div>
                 </div>
 
-                <!-- 4. TIMELINE PENYELESAIAN UJI SAMPLE -->
-                <div class="card border-0 shadow-sm mb-4" style="border-radius: 14px;">
-                    <div class="card-body p-4">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                            <div>
-                                <h6 class="fw-bold mb-1" style="color: #0f172a;">
-                                    <i class="ti ti-timeline-event text-primary me-1"></i> 4. TIMELINE PENYELESAIAN UJI SAMPLE (INTEGRASI BARCODE / QR LIMS)
-                                </h6>
-                                <small class="text-muted">Alur tahapan penyelesaian pengujian sampel secara real-time dari registrasi hingga penerbitan LHU</small>
-                            </div>
-                            <span class="badge bg-label-info">Update Otomatis (Dummy Data)</span>
+                <!-- 4. MAIN DATA TABLE: INDEKS MATURITAS, IKU & JUMLAH SAMPEL UJI -->
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <div>
+                            <h6 class="fw-bold mb-0 text-dark">
+                                <i class="ti ti-table me-1 text-primary"></i> Matriks Capaian Indikator Kinerja &amp; Sampel Laboratorium
+                            </h6>
+                            <small class="text-muted">Target, realisasi bulanan (Jan &ndash; Des), capaian akhir, serta sumber data verifikasi</small>
                         </div>
+                        <span class="badge bg-light text-secondary border fw-medium">Lengkap Jan &ndash; Des</span>
+                    </div>
 
-                        <!-- Stepper Ringkasan Tahapan -->
-                        <div class="timeline-stepper">
-                            <div class="timeline-step-card completed">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <span class="badge bg-success">Tahap 1</span>
-                                    <i class="ti ti-qrcode text-success fs-5"></i>
-                                </div>
-                                <div class="fw-bold small text-dark">Registrasi &amp; Kode Sampel</div>
-                                <div class="text-muted" style="font-size: 0.75rem;">1,240 Sampel Terdaftar</div>
-                            </div>
+                    <div class="dash-table-container">
+                        <table class="dash-data-table">
+                            <thead>
+                                <tr>
+                                    <th class="dash-sticky-col">URAIAN</th>
+                                    <th style="width: 70px;">TARGET</th>
+                                    <th style="width: 48px;">JAN</th>
+                                    <th style="width: 48px;">FEB</th>
+                                    <th style="width: 48px;">MAR</th>
+                                    <th style="width: 48px;">APR</th>
+                                    <th style="width: 48px;">MEI</th>
+                                    <th style="width: 48px;">JUN</th>
+                                    <th style="width: 48px;">JUL</th>
+                                    <th style="width: 48px;">AGS</th>
+                                    <th style="width: 48px;">SEPT</th>
+                                    <th style="width: 48px;">OKT</th>
+                                    <th style="width: 48px;">NOV</th>
+                                    <th style="width: 48px;">DES</th>
+                                    <th style="width: 140px;">UPDATE CAPAIAN</th>
+                                    <th style="min-width: 170px;">SUMBER DATA</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- SECTION A: INDIKATOR MATURITAS & IKU -->
+                                <tr class="dash-sec-divider">
+                                    <td class="dash-sticky-col">1. INDIKATOR MATURITAS &amp; IKU LABORATORIUM</td>
+                                    <td colspan="15"></td>
+                                </tr>
 
-                            <div class="timeline-step-card completed">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <span class="badge bg-success">Tahap 2</span>
-                                    <i class="ti ti-arrows-split text-success fs-5"></i>
-                                </div>
-                                <div class="fw-bold small text-dark">Distribusi &amp; Preparasi</div>
-                                <div class="text-muted" style="font-size: 0.75rem;">42 Sampel Sedang Preparasi</div>
-                            </div>
+                                <!-- Row 1: Indeks Maturitas Digitalisasi Lab -->
+                                <tr>
+                                    <td class="dash-sticky-col">Indeks Maturitas Digitalisasi Lab</td>
+                                    <td class="cell-target-subtle">100</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r fw-bold">85</td>
+                                    <td class="dash-num-r fw-bold">85</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="cell-capaian-subtle">85.00</td>
+                                    <td>
+                                        <a href="javascript:void(0)" class="dash-chip-link" title="template_master_asesmen">
+                                            <i class="ti ti-file-analytics text-success"></i> template_master_ases...
+                                        </a>
+                                    </td>
+                                </tr>
 
-                            <div class="timeline-step-card active-step">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <span class="badge bg-primary">Tahap 3</span>
-                                    <i class="ti ti-microscope text-primary fs-5"></i>
-                                </div>
-                                <div class="fw-bold small text-dark">Pengujian Instrumen Lab</div>
-                                <div class="text-muted" style="font-size: 0.75rem;">78 Sampel Diuji Analis</div>
-                            </div>
+                                <!-- Row 2: IKU 1 -->
+                                <tr>
+                                    <td class="dash-sticky-col">
+                                        <div class="fw-semibold">IKU 1 - Persentase Sampel Sediaan Farmasi</div>
+                                        <small class="text-muted">Sampel berisiko ditindaklanjuti sesuai ketentuan</small>
+                                    </td>
+                                    <td class="cell-target-subtle">98.54</td>
+                                    <td class="dash-num-r">100.00</td>
+                                    <td class="dash-num-r">94.71</td>
+                                    <td class="dash-num-r">96.18</td>
+                                    <td class="dash-num-r">97.70</td>
+                                    <td class="dash-num-r">96.68</td>
+                                    <td class="dash-num-r">97.15</td>
+                                    <td class="dash-num-r">98.97</td>
+                                    <td class="dash-num-r">99.19</td>
+                                    <td class="dash-num-r fw-bold text-success">99.25</td>
+                                    <td class="dash-num-r text-muted">0.00</td>
+                                    <td class="dash-num-r text-muted">0.00</td>
+                                    <td class="dash-num-r text-muted">0.00</td>
+                                    <td class="cell-capaian-subtle">99.25</td>
+                                    <td rowspan="4" style="vertical-align: top;">
+                                        <a href="https://sites.google.com/view/manajemenkinerjabbpomdibandung/home/2026/monev-2026/input-capaian-iku?authuser=0" target="_blank" rel="noopener" class="dash-chip-link" style="max-width: 240px;" title="Input Capaian IKU Monev BBPOM di Bandung">
+                                            <i class="ti ti-external-link text-primary"></i> Monev Capaian IKU BBPOM
+                                        </a>
+                                    </td>
+                                </tr>
 
-                            <div class="timeline-step-card active-step">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <span class="badge bg-warning text-dark">Tahap 4</span>
-                                    <i class="ti ti-shield-check text-warning fs-5"></i>
-                                </div>
-                                <div class="fw-bold small text-dark">Verifikasi &amp; Kendali Mutu</div>
-                                <div class="text-muted" style="font-size: 0.75rem;">35 Menunggu Verifikasi</div>
-                            </div>
+                                <!-- Row 3: IKU 2 -->
+                                <tr>
+                                    <td class="dash-sticky-col">
+                                        <div class="fw-semibold">IKU 2 - Persentase Sampel Pangan Olahan</div>
+                                        <small class="text-muted">Sampel berisiko ditindaklanjuti sesuai ketentuan</small>
+                                    </td>
+                                    <td class="cell-target-subtle">95.98</td>
+                                    <td class="dash-num-r text-muted">0.00</td>
+                                    <td class="dash-num-r">94.87</td>
+                                    <td class="dash-num-r">93.34</td>
+                                    <td class="dash-num-r">96.25</td>
+                                    <td class="dash-num-r">95.12</td>
+                                    <td class="dash-num-r">97.21</td>
+                                    <td class="dash-num-r">97.66</td>
+                                    <td class="dash-num-r">98.00</td>
+                                    <td class="dash-num-r fw-bold text-success">97.24</td>
+                                    <td class="dash-num-r text-muted">0.00</td>
+                                    <td class="dash-num-r text-muted">0.00</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="cell-capaian-subtle">97.24</td>
+                                </tr>
 
-                            <div class="timeline-step-card completed">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <span class="badge bg-success">Tahap 5</span>
-                                    <i class="ti ti-file-certificate text-success fs-5"></i>
-                                </div>
-                                <div class="fw-bold small text-dark">Selesai Uji (Terbit LHU)</div>
-                                <div class="text-muted" style="font-size: 0.75rem;">1,085 Sampel Selesai Uji</div>
-                            </div>
+                                <!-- Row 4: IKU 3 -->
+                                <tr>
+                                    <td class="dash-sticky-col">
+                                        <div class="fw-semibold">IKU 3 - Persentase Sampel KLB</div>
+                                        <small class="text-muted">Keracunan pangan yang diuji sesuai standar</small>
+                                    </td>
+                                    <td class="cell-target-subtle">74</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r fw-bold text-success">100</td>
+                                    <td class="dash-num-r fw-bold text-success">100</td>
+                                    <td class="dash-num-r fw-bold text-success">100</td>
+                                    <td class="dash-num-r fw-bold text-success">100</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="cell-capaian-subtle">100.00</td>
+                                </tr>
+
+                                <!-- Row 5: IKU PIRT -->
+                                <tr>
+                                    <td class="dash-sticky-col">
+                                        <div class="fw-semibold">IKU - Persentase Sampel PIRT Berisiko</div>
+                                        <small class="text-muted">Ditindaklanjuti sesuai ketentuan</small>
+                                    </td>
+                                    <td class="cell-target-subtle">95</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r">92.42</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r">75</td>
+                                    <td class="dash-num-r">75</td>
+                                    <td class="dash-num-r text-danger">#REF!</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-r text-muted">0</td>
+                                    <td class="dash-num-c text-danger">#REF!</td>
+                                </tr>
+
+                                <!-- SECTION B: JUMLAH SAMPEL KOMODITI -->
+                                <tr class="dash-sec-divider">
+                                    <td class="dash-sticky-col">2. JUMLAH SAMPEL UJI PER KOMODITI</td>
+                                    <td colspan="15"></td>
+                                </tr>
+
+                                <!-- Sampel Row 1: Obat -->
+                                <tr>
+                                    <td class="dash-sticky-col">Jumlah Sampel Sediaan Farmasi - Obat</td>
+                                    <td class="dash-num-c text-muted">-</td>
+                                    <td class="dash-num-r">25</td>
+                                    <td class="dash-num-r">41</td>
+                                    <td class="dash-num-r">37</td>
+                                    <td class="dash-num-r">36</td>
+                                    <td class="dash-num-r">46</td>
+                                    <td class="dash-num-r">46</td>
+                                    <td class="dash-num-r">43</td>
+                                    <td class="dash-num-r">43</td>
+                                    <td class="dash-num-r">42</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-c fw-semibold">42.00</td>
+                                    <td class="dash-num-r fw-bold" style="background:#f8fafc;">359 Total</td>
+                                </tr>
+
+                                <!-- Sampel Row 2: OBA -->
+                                <tr>
+                                    <td class="dash-sticky-col">Jumlah Sampel Sediaan Farmasi - OBA</td>
+                                    <td class="dash-num-c text-muted">-</td>
+                                    <td class="dash-num-r">22</td>
+                                    <td class="dash-num-r">26</td>
+                                    <td class="dash-num-r">28</td>
+                                    <td class="dash-num-r">18</td>
+                                    <td class="dash-num-r">49</td>
+                                    <td class="dash-num-r">37</td>
+                                    <td class="dash-num-r">35</td>
+                                    <td class="dash-num-r">18</td>
+                                    <td class="dash-num-r">32</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-c fw-semibold">32.00</td>
+                                    <td class="dash-num-r fw-bold" style="background:#f8fafc;">265 Total</td>
+                                </tr>
+
+                                <!-- Sampel Row 3: SK -->
+                                <tr>
+                                    <td class="dash-sticky-col">Jumlah Sampel Sediaan Farmasi - SK</td>
+                                    <td class="dash-num-c text-muted">-</td>
+                                    <td class="dash-num-r">10</td>
+                                    <td class="dash-num-r">7</td>
+                                    <td class="dash-num-r">8</td>
+                                    <td class="dash-num-r">4</td>
+                                    <td class="dash-num-r">10</td>
+                                    <td class="dash-num-r">7</td>
+                                    <td class="dash-num-r">5</td>
+                                    <td class="dash-num-r">6</td>
+                                    <td class="dash-num-r">4</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-c fw-semibold">4.00</td>
+                                    <td class="dash-num-r fw-bold" style="background:#f8fafc;">61 Total</td>
+                                </tr>
+
+                                <!-- Sampel Row 4: Kosmetik -->
+                                <tr>
+                                    <td class="dash-sticky-col">Jumlah Sampel Sediaan Farmasi - Kosmetik</td>
+                                    <td class="dash-num-c text-muted">-</td>
+                                    <td class="dash-num-r">34</td>
+                                    <td class="dash-num-r">60</td>
+                                    <td class="dash-num-r">60</td>
+                                    <td class="dash-num-r">52</td>
+                                    <td class="dash-num-r">70</td>
+                                    <td class="dash-num-r">64</td>
+                                    <td class="dash-num-r">62</td>
+                                    <td class="dash-num-r">62</td>
+                                    <td class="dash-num-r">61</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-c fw-semibold">61.00</td>
+                                    <td class="dash-num-r fw-bold" style="background:#f8fafc;">525 Total</td>
+                                </tr>
+
+                                <!-- Sampel Row 5: Pangan Olahan -->
+                                <tr>
+                                    <td class="dash-sticky-col">Jumlah Sampel Sediaan Pangan Olahan</td>
+                                    <td class="dash-num-c text-muted">-</td>
+                                    <td class="dash-num-r">81</td>
+                                    <td class="dash-num-r">54</td>
+                                    <td class="dash-num-r">51</td>
+                                    <td class="dash-num-r">17</td>
+                                    <td class="dash-num-r">41</td>
+                                    <td class="dash-num-r">30</td>
+                                    <td class="dash-num-r">30</td>
+                                    <td class="dash-num-r">55</td>
+                                    <td class="dash-num-r">21</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-c fw-semibold">21.00</td>
+                                    <td class="dash-num-r fw-bold" style="background:#f8fafc;">380 Total</td>
+                                </tr>
+
+                                <!-- Sampel Row 6: KLB -->
+                                <tr>
+                                    <td class="dash-sticky-col">Jumlah Sampel KLB</td>
+                                    <td class="dash-num-c text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-r text-muted">-</td>
+                                    <td class="dash-num-c text-muted">-</td>
+                                    <td class="dash-num-r text-muted" style="background:#f8fafc;">0 Total</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 5. AKUMULASI KUMULATIF & TREN BULANAN -->
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <div>
+                            <h6 class="fw-bold mb-0 text-dark">
+                                <i class="ti ti-calculator me-1 text-primary"></i> Rincian Akumulasi Kumulatif &amp; Bulanan per Komoditi
+                            </h6>
+                            <small class="text-muted">Progres penambahan sampel kumulatif berjalan dan rincian per bulan</small>
                         </div>
-
-                        <!-- Tabel Timeline Penyelesaian Uji Sample -->
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle m-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>ID Sampel</th>
-                                        <th>Komoditi</th>
-                                        <th>Parameter Uji</th>
-                                        <th>Lokasi Lab</th>
-                                        <th>Timeline Tahapan Penyelesaian</th>
-                                        <th>Batas SLA</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="fw-bold text-primary">BDG-98211</td>
-                                        <td>Obat &amp; NAPZA</td>
-                                        <td>Identifikasi Spektrofotometri</td>
-                                        <td>Lab Kimia</td>
-                                        <td style="min-width: 210px;">
-                                            <div class="d-flex justify-content-between small mb-1">
-                                                <span class="fw-semibold">Tahap 4/5: Verifikasi Penyelia</span>
-                                                <span class="text-primary fw-bold">85%</span>
-                                            </div>
-                                            <div class="progress" style="height: 6px;">
-                                                <div class="progress-bar bg-primary" style="width: 85%;"></div>
-                                            </div>
-                                            <small class="text-muted" style="font-size: 0.7rem;">Masuk: 26 Okt &rarr; Est. Selesai: 28 Okt 16:00</small>
-                                        </td>
-                                        <td><span class="fw-semibold text-danger">Sisa 2 Jam</span></td>
-                                        <td><span class="badge bg-label-danger"><i class="ti ti-circle-filled me-1" style="font-size: 7px;"></i>Urgent SLA</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold text-primary">BDG-98212</td>
-                                        <td>Pangan Olahan</td>
-                                        <td>Cemaran Mikrobiologi (ALT)</td>
-                                        <td>Lab Mikro</td>
-                                        <td>
-                                            <div class="d-flex justify-content-between small mb-1">
-                                                <span class="fw-semibold">Tahap 3/5: Inkubasi &amp; Uji Lab</span>
-                                                <span class="text-warning fw-bold">60%</span>
-                                            </div>
-                                            <div class="progress" style="height: 6px;">
-                                                <div class="progress-bar bg-warning" style="width: 60%;"></div>
-                                            </div>
-                                            <small class="text-muted" style="font-size: 0.7rem;">Masuk: 26 Okt &rarr; Est. Selesai: 29 Okt 14:00</small>
-                                        </td>
-                                        <td><span class="fw-semibold">Sisa 1 Hari</span></td>
-                                        <td><span class="badge bg-label-warning"><i class="ti ti-circle-filled me-1" style="font-size: 7px;"></i>Proses Uji</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold text-primary">BDG-98213</td>
-                                        <td>Kosmetik</td>
-                                        <td>Logam Berat (Hg, Pb, Cd - AAS)</td>
-                                        <td>Lab Kimia</td>
-                                        <td>
-                                            <div class="d-flex justify-content-between small mb-1">
-                                                <span class="fw-semibold">Tahap 5/5: LHU Terbit (TTE)</span>
-                                                <span class="text-success fw-bold">100%</span>
-                                            </div>
-                                            <div class="progress" style="height: 6px;">
-                                                <div class="progress-bar bg-success" style="width: 100%;"></div>
-                                            </div>
-                                            <small class="text-muted" style="font-size: 0.7rem;">Masuk: 25 Okt &rarr; Selesai: 28 Okt 10:15</small>
-                                        </td>
-                                        <td><span class="text-success fw-semibold">Tepat Waktu</span></td>
-                                        <td><span class="badge bg-label-success"><i class="ti ti-circle-check me-1"></i>Selesai Uji</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold text-primary">BDG-98214</td>
-                                        <td>Obat Tradisional</td>
-                                        <td>Uji Bahan Kimia Obat (KLT/HPLC)</td>
-                                        <td>Lab OT &amp; Kos</td>
-                                        <td>
-                                            <div class="d-flex justify-content-between small mb-1">
-                                                <span class="fw-semibold">Tahap 3/5: Analisis Instrumen HPLC</span>
-                                                <span class="text-info fw-bold">70%</span>
-                                            </div>
-                                            <div class="progress" style="height: 6px;">
-                                                <div class="progress-bar bg-info" style="width: 70%;"></div>
-                                            </div>
-                                            <small class="text-muted" style="font-size: 0.7rem;">Masuk: 27 Okt &rarr; Est. Selesai: 28 Okt 19:00</small>
-                                        </td>
-                                        <td><span class="fw-semibold text-warning">Sisa 5 Jam</span></td>
-                                        <td><span class="badge bg-label-info"><i class="ti ti-circle-filled me-1" style="font-size: 7px;"></i>On Track</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold text-primary">BDG-98215</td>
-                                        <td>Pangan Jajanan</td>
-                                        <td>Uji Formalin, Boraks &amp; Rhodamin B</td>
-                                        <td>Lab Kimia</td>
-                                        <td>
-                                            <div class="d-flex justify-content-between small mb-1">
-                                                <span class="fw-semibold">Tahap 5/5: LHU Terbit (TTE)</span>
-                                                <span class="text-success fw-bold">100%</span>
-                                            </div>
-                                            <div class="progress" style="height: 6px;">
-                                                <div class="progress-bar bg-success" style="width: 100%;"></div>
-                                            </div>
-                                            <small class="text-muted" style="font-size: 0.7rem;">Masuk: 25 Okt &rarr; Selesai: 28 Okt 09:30</small>
-                                        </td>
-                                        <td><span class="text-success fw-semibold">Tepat Waktu</span></td>
-                                        <td><span class="badge bg-label-success"><i class="ti ti-circle-check me-1"></i>Selesai Uji</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    </div>
+                    <div class="dash-table-container">
+                        <table class="dash-sub-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 220px; text-align: left; padding-left: 10px;">KOMODITI</th>
+                                    <th>JAN</th><th>FEB</th><th>MAR</th><th>APR</th><th>MEI</th><th>JUN</th><th>JUL</th><th>AGS</th><th>SEPT</th>
+                                    <th>JAN</th><th>FEB</th><th>MAR</th><th>APR</th><th>MAY</th><th>JUN</th><th>JUL</th><th>AUG</th><th>SEP</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="font-weight: 500; padding-left: 10px;">Jumlah Sampel Sediaan Farmasi - Obat</td>
+                                    <td class="dash-num-r">25.00</td><td class="dash-num-r">66.00</td><td class="dash-num-r">103.00</td><td class="dash-num-r">139.00</td><td class="dash-num-r">185.00</td><td class="dash-num-r">231.00</td><td class="dash-num-r">274.00</td><td class="dash-num-r">317.00</td><td class="dash-num-r fw-bold">359.00</td>
+                                    <td class="dash-num-r">25.00</td><td class="dash-num-r">41.00</td><td class="dash-num-r">37.00</td><td class="dash-num-r">36.00</td><td class="dash-num-r">46.00</td><td class="dash-num-r">46.00</td><td class="dash-num-r">43.00</td><td class="dash-num-r">43.00</td><td class="dash-num-r">42.00</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 500; padding-left: 10px;">Jumlah Sampel Sediaan Farmasi - OBA</td>
+                                    <td class="dash-num-r">22.00</td><td class="dash-num-r">48.00</td><td class="dash-num-r">76.00</td><td class="dash-num-r">94.00</td><td class="dash-num-r">143.00</td><td class="dash-num-r">180.00</td><td class="dash-num-r">215.00</td><td class="dash-num-r">233.00</td><td class="dash-num-r fw-bold">265.00</td>
+                                    <td class="dash-num-r">22.00</td><td class="dash-num-r">26.00</td><td class="dash-num-r">28.00</td><td class="dash-num-r">18.00</td><td class="dash-num-r">49.00</td><td class="dash-num-r">37.00</td><td class="dash-num-r">35.00</td><td class="dash-num-r">18.00</td><td class="dash-num-r">32.00</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 500; padding-left: 10px;">Jumlah Sampel Sediaan Farmasi - SK</td>
+                                    <td class="dash-num-r">10.00</td><td class="dash-num-r">17.00</td><td class="dash-num-r">25.00</td><td class="dash-num-r">29.00</td><td class="dash-num-r">39.00</td><td class="dash-num-r">46.00</td><td class="dash-num-r">51.00</td><td class="dash-num-r">57.00</td><td class="dash-num-r fw-bold">61.00</td>
+                                    <td class="dash-num-r">10.00</td><td class="dash-num-r">7.00</td><td class="dash-num-r">8.00</td><td class="dash-num-r">4.00</td><td class="dash-num-r">10.00</td><td class="dash-num-r">7.00</td><td class="dash-num-r">5.00</td><td class="dash-num-r">6.00</td><td class="dash-num-r">4.00</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 500; padding-left: 10px;">Jumlah Sampel Sediaan Farmasi - Kosmetik</td>
+                                    <td class="dash-num-r">34.00</td><td class="dash-num-r">94.00</td><td class="dash-num-r">154.00</td><td class="dash-num-r">206.00</td><td class="dash-num-r">276.00</td><td class="dash-num-r">340.00</td><td class="dash-num-r">402.00</td><td class="dash-num-r">464.00</td><td class="dash-num-r fw-bold">525.00</td>
+                                    <td class="dash-num-r">34.00</td><td class="dash-num-r">60.00</td><td class="dash-num-r">60.00</td><td class="dash-num-r">52.00</td><td class="dash-num-r">70.00</td><td class="dash-num-r">64.00</td><td class="dash-num-r">62.00</td><td class="dash-num-r">62.00</td><td class="dash-num-r">61.00</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 500; padding-left: 10px;">Jumlah Sampel Sediaan Pangan Olahan</td>
+                                    <td class="dash-num-r">81.00</td><td class="dash-num-r">135.00</td><td class="dash-num-r">186.00</td><td class="dash-num-r">203.00</td><td class="dash-num-r">244.00</td><td class="dash-num-r">274.00</td><td class="dash-num-r">304.00</td><td class="dash-num-r">359.00</td><td class="dash-num-r fw-bold">380.00</td>
+                                    <td class="dash-num-r">81.00</td><td class="dash-num-r">54.00</td><td class="dash-num-r">51.00</td><td class="dash-num-r">17.00</td><td class="dash-num-r">41.00</td><td class="dash-num-r">30.00</td><td class="dash-num-r">30.00</td><td class="dash-num-r">55.00</td><td class="dash-num-r">21.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -1477,7 +1709,7 @@
                 <!-- HEADER & ACTION BUTTONS FOR DYNAMIC ROOMS/DEVICES -->
                 <div class="d-flex flex-wrap justify-content-between align-items-center py-2 mb-3 gap-2">
                     <div>
-                        <h4 class="fw-bold mb-0" style="color: #034284;"><span class="text-muted fw-light">Digitalisasi Lab /</span> Akomodasi dan Lingkungan</h4>
+                        <h4 class="fw-bold mb-0" style="color: #034284;"><span class="text-muted fw-light">DigitLab BDG /</span> Akomodasi dan Lingkungan</h4>
                         <small class="text-muted">Monitoring Suhu, Kelembapan, Gas, Otomasi AC &amp; Intensitas Cahaya (Saklar Servo) Real-Time</small>
                     </div>
                     <div class="d-flex flex-wrap align-items-center gap-2">
@@ -2117,6 +2349,795 @@
 
             </div> <!-- / #section-akomodasi -->
 
+            <!-- ===================================================================== -->
+            <!-- SECTION 2: PERENCANAAN LABORATORIUM (RENLAK) — MINIMALIST ENTERPRISE UI -->
+            <!-- ===================================================================== -->
+            <div id="section-perencanaan" style="display: none;">
+                <style>
+                    /* Minimalist & Professional Clean Styles */
+                    .renlak-header-wrap {
+                        padding: 4px 0 16px 0;
+                        margin-bottom: 8px;
+                        border-bottom: 1px solid #eef2f6;
+                    }
+                    .renlak-stat-strip {
+                        background: #ffffff;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 10px;
+                        padding: 14px 18px;
+                        margin-bottom: 14px;
+                    }
+                    .renlak-stat-col {
+                        position: relative;
+                    }
+                    @media (min-width: 768px) {
+                        .renlak-stat-col:not(:last-child)::after {
+                            content: '';
+                            position: absolute;
+                            right: 0;
+                            top: 15%;
+                            height: 70%;
+                            width: 1px;
+                            background: #eef2f6;
+                        }
+                    }
+                    .renlak-stat-label {
+                        font-size: 0.72rem;
+                        font-weight: 600;
+                        color: #64748b;
+                        text-transform: uppercase;
+                        letter-spacing: 0.4px;
+                        margin-bottom: 2px;
+                    }
+                    .renlak-stat-value {
+                        font-size: 1.35rem;
+                        font-weight: 700;
+                        color: #0f172a;
+                        line-height: 1.2;
+                    }
+                    .renlak-filter-bar {
+                        background: #f8fafc;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 8px;
+                        padding: 8px 12px;
+                        margin-bottom: 14px;
+                    }
+                    /* Minimal Tabs */
+                    .renlak-minimal-tabs {
+                        display: flex;
+                        gap: 4px;
+                        border-bottom: 1px solid #e2e8f0;
+                        margin-bottom: 12px;
+                    }
+                    .renlak-tab-link {
+                        background: transparent;
+                        border: none;
+                        border-bottom: 2px solid transparent;
+                        color: #64748b;
+                        font-weight: 600;
+                        font-size: 0.84rem;
+                        padding: 8px 14px;
+                        cursor: pointer;
+                        transition: color 0.15s ease, border-color 0.15s ease;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 6px;
+                    }
+                    .renlak-tab-link:hover {
+                        color: #034284;
+                    }
+                    .renlak-tab-link.active {
+                        color: #034284;
+                        border-bottom-color: #034284;
+                    }
+                    /* Matrix Table */
+                    .renlak-matrix-card {
+                        background: #ffffff;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 8px;
+                        overflow: hidden;
+                    }
+                    .renlak-matrix-scroll {
+                        overflow-x: auto;
+                        overflow-y: auto;
+                        max-height: 680px;
+                        position: relative;
+                        scroll-behavior: smooth;
+                    }
+                    .renlak-table {
+                        border-collapse: separate;
+                        border-spacing: 0;
+                        width: max-content;
+                        min-width: 100%;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+                        font-size: 12px;
+                        color: #1e293b;
+                    }
+                    .renlak-table th,
+                    .renlak-table td {
+                        border-right: 1px solid #e2e8f0;
+                        border-bottom: 1px solid #e2e8f0;
+                        padding: 6px 8px;
+                        vertical-align: middle;
+                    }
+                    .renlak-table thead th {
+                        position: sticky;
+                        z-index: 15;
+                        background: #f8fafc;
+                        color: #475569;
+                        font-weight: 600;
+                        text-align: center;
+                        white-space: nowrap;
+                    }
+                    .renlak-table thead tr.renlak-hdr-row-1 th {
+                        top: 0;
+                        height: 28px;
+                    }
+                    .renlak-table thead tr.renlak-hdr-row-2 th {
+                        top: 28px;
+                        height: 28px;
+                    }
+                    .renlak-table thead tr.renlak-hdr-row-3 th {
+                        top: 56px;
+                        height: 24px;
+                    }
+                    /* Sticky Left Columns */
+                    .renlak-sticky-1 {
+                        position: sticky !important;
+                        left: 0;
+                        width: 44px;
+                        min-width: 44px;
+                        max-width: 44px;
+                        z-index: 12;
+                        background: #ffffff;
+                    }
+                    .renlak-sticky-2 {
+                        position: sticky !important;
+                        left: 44px;
+                        width: 270px;
+                        min-width: 270px;
+                        max-width: 270px;
+                        z-index: 12;
+                        background: #ffffff;
+                        border-right: 2px solid #cbd5e1 !important;
+                    }
+                    .renlak-table thead .renlak-sticky-1,
+                    .renlak-table thead .renlak-sticky-2 {
+                        z-index: 25 !important;
+                        background: #f1f5f9 !important;
+                    }
+                    /* Clean Category Row (Refined corporate style) */
+                    .renlak-category-row td {
+                        background: #f8fafc !important;
+                        color: #0f172a !important;
+                        font-weight: 700;
+                        font-size: 11.5px;
+                        letter-spacing: 0.3px;
+                        padding: 6px 10px !important;
+                        border-top: 1px solid #cbd5e1;
+                        border-bottom: 1px solid #cbd5e1;
+                    }
+                    .renlak-category-row td.renlak-sticky-1,
+                    .renlak-category-row td.renlak-sticky-2 {
+                        background: #f8fafc !important;
+                    }
+                    .renlak-cell-capaian {
+                        background: #f0fdf4;
+                        font-weight: 600;
+                        text-align: center;
+                        color: #15803d;
+                    }
+                    .renlak-wk-cell {
+                        width: 24px;
+                        min-width: 24px;
+                        max-width: 24px;
+                        height: 28px;
+                        text-align: center;
+                        font-weight: 600;
+                        font-size: 11px;
+                        padding: 0 !important;
+                        cursor: pointer;
+                        user-select: none;
+                        transition: background-color 0.12s ease;
+                    }
+                    .renlak-wk-cell:hover {
+                        outline: 1px solid #034284;
+                        z-index: 5;
+                    }
+                    /* Minimalist Clean Colors for Weeks */
+                    .wk-empty-plan {
+                        background: #ffffff;
+                        color: #cbd5e1;
+                    }
+                    .wk-empty-real {
+                        background: #ffffff;
+                        color: #cbd5e1;
+                    }
+                    .wk-empty-gantt {
+                        background: #ffffff;
+                        color: #e2e8f0;
+                    }
+                    .wk-active-plan {
+                        background: #3b82f6 !important;
+                        color: #ffffff !important;
+                    }
+                    .wk-active-plan-excel {
+                        background: #3b82f6 !important;
+                        color: #ffffff !important;
+                    }
+                    .wk-active-real {
+                        background: #10b981 !important;
+                        color: #ffffff !important;
+                    }
+                    .wk-active-real-excel {
+                        background: #10b981 !important;
+                        color: #ffffff !important;
+                    }
+                    .wk-active-both {
+                        background: #0284c7 !important;
+                        color: #ffffff !important;
+                    }
+                    .wk-active-late {
+                        background: #ef4444 !important;
+                        color: #ffffff !important;
+                    }
+                    .wk-active-ongoing {
+                        background: #f59e0b !important;
+                        color: #ffffff !important;
+                    }
+                    /* Status Badges */
+                    .badge-status-renlak {
+                        font-size: 11px;
+                        font-weight: 500;
+                        padding: 3px 8px;
+                        border-radius: 6px;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 4px;
+                        white-space: nowrap;
+                    }
+                    .status-selesai {
+                        background: #f0fdf4;
+                        color: #166534;
+                        border: 1px solid #bbf7d0;
+                    }
+                    .status-berjalan {
+                        background: #fffbeb;
+                        color: #92400e;
+                        border: 1px solid #fde68a;
+                    }
+                    .status-belum {
+                        background: #f8fafc;
+                        color: #475569;
+                        border: 1px solid #e2e8f0;
+                    }
+                    .status-terlambat {
+                        background: #fef2f2;
+                        color: #991b1b;
+                        border: 1px solid #fecaca;
+                    }
+                    /* Schedule Picker in Modal */
+                    .renlak-picker-month-box {
+                        border: 1px solid #e2e8f0;
+                        border-radius: 6px;
+                        padding: 8px;
+                        background: #ffffff;
+                    }
+                    .renlak-picker-wk-btn {
+                        width: 28px;
+                        height: 26px;
+                        border: 1px solid #e2e8f0;
+                        background: #f8fafc;
+                        border-radius: 4px;
+                        font-size: 10.5px;
+                        font-weight: 600;
+                        color: #334155;
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        cursor: pointer;
+                        padding: 0;
+                    }
+                    .renlak-picker-wk-btn.selected-plan {
+                        background: #2563eb;
+                        color: #ffffff;
+                        border-color: #1d4ed8;
+                    }
+                    .renlak-picker-wk-btn.selected-real {
+                        background: #10b981;
+                        color: #ffffff;
+                        border-color: #059669;
+                    }
+                </style>
+
+                <!-- 1. TOP HEADER: MINIMALIST & PROFESSIONAL -->
+                <div class="renlak-header-wrap">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                        <div>
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <h4 class="fw-bold mb-0 text-dark" style="letter-spacing: -0.3px; font-size: 1.25rem;">
+                                    Perencanaan Laboratorium (RENLAK)
+                                </h4>
+                                <span class="badge bg-light text-secondary border fw-medium px-2 py-1" style="font-size: 0.72rem;">2026 – 2027</span>
+                            </div>
+                            <p class="text-muted mb-0 small">
+                                Matriks rencana kerja tahunan, jadwal mingguan, dan pemantauan capaian laboratorium BBPOM di Bandung.
+                            </p>
+                        </div>
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <span class="text-muted small me-1 d-none d-sm-inline">
+                                <i class="ti ti-calendar me-1"></i>Acuan: <strong class="text-dark" id="renlakRefDateLabel">29 Okt 2026</strong>
+                            </span>
+                            <button type="button" class="btn btn-primary btn-sm px-3 shadow-none fw-medium" onclick="openRenlakModal()">
+                                <i class="ti ti-plus me-1"></i> Tambah Kegiatan
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm shadow-none" onclick="exportRenlakPdf()">
+                                <i class="ti ti-file-text me-1"></i> Ekspor PDF
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm shadow-none" onclick="printRenlakReport()">
+                                <i class="ti ti-printer me-1"></i> Cetak
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm shadow-none" onclick="resetRenlakToExcelDefault()" title="Muat Ulang Data Standar">
+                                <i class="ti ti-refresh"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. STATISTIK KPI SUMMARY (CLEAN MINIMALIST STRIP) -->
+                <div class="renlak-stat-strip">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-6 col-md-3 col-xl-2 renlak-stat-col">
+                            <div class="renlak-stat-label">Total Kegiatan</div>
+                            <div class="d-flex align-items-baseline gap-2">
+                                <span class="renlak-stat-value" id="renlakKpiTotalKegiatan">11</span>
+                                <small class="text-muted" id="renlakKpiKategoriSub">3 Kategori</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3 col-xl-2 renlak-stat-col">
+                            <div class="renlak-stat-label">Target Output</div>
+                            <div class="d-flex align-items-baseline gap-2">
+                                <span class="renlak-stat-value" id="renlakKpiTotalTarget">32</span>
+                                <small class="text-muted">Total</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3 col-xl-2 renlak-stat-col">
+                            <div class="renlak-stat-label">Realisasi</div>
+                            <div class="d-flex align-items-baseline gap-2">
+                                <span class="renlak-stat-value text-success" id="renlakKpiTotalRealisasi">6</span>
+                                <small class="text-muted">Tercapai</small>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-xl-3 renlak-stat-col">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="renlak-stat-label mb-0">Rata-rata Capaian</span>
+                                <span class="fw-bold text-dark" id="renlakKpiRataCapaian">34.85%</span>
+                            </div>
+                            <div class="progress" style="height: 5px; background: #e2e8f0; border-radius: 3px;">
+                                <div id="renlakKpiProgressBar" class="progress-bar bg-primary" role="progressbar" style="width: 34.85%;"></div>
+                            </div>
+                            <small class="text-muted mt-1 d-block" id="renlakKpiBobotCapaian">Bobot Volume: 18.75%</small>
+                        </div>
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <div class="renlak-stat-label mb-1">Status Kegiatan</div>
+                            <div class="d-flex flex-wrap gap-1">
+                                <span class="badge bg-light text-success border fw-medium px-2 py-1"><span id="renlakStatSelesai">3</span> Selesai</span>
+                                <span class="badge bg-light text-warning border fw-medium px-2 py-1"><span id="renlakStatBerjalan">2</span> Berjalan</span>
+                                <span class="badge bg-light text-secondary border fw-medium px-2 py-1"><span id="renlakStatBelum">6</span> Belum</span>
+                                <span class="badge bg-light text-danger border fw-medium px-2 py-1"><span id="renlakStatTerlambat">0</span> Terlambat</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. FILTER & TOOLBAR (CLEAN, COMPACT) -->
+                <div class="renlak-filter-bar">
+                    <div class="row g-2 align-items-center">
+                        <!-- Pencarian -->
+                        <div class="col-12 col-md-3">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-white border-end-0 text-muted"><i class="ti ti-search"></i></span>
+                                <input type="text" id="renlakFilterSearch" class="form-control border-start-0" placeholder="Cari kegiatan atau sasaran..." oninput="applyRenlakFilters()">
+                            </div>
+                        </div>
+                        <!-- Filter Kategori -->
+                        <div class="col-6 col-md-2">
+                            <select id="renlakFilterKategori" class="form-select form-select-sm" onchange="applyRenlakFilters()">
+                                <option value="ALL">Semua Kategori</option>
+                                <option value="Perencanaan">1. Perencanaan</option>
+                                <option value="Pengembangan Digitalisasi LAB">2. Pengembangan Digitalisasi</option>
+                                <option value="Monitoring dan Evaluasi">3. Monitoring &amp; Evaluasi</option>
+                            </select>
+                        </div>
+                        <!-- Filter Status -->
+                        <div class="col-6 col-md-2">
+                            <select id="renlakFilterStatus" class="form-select form-select-sm" onchange="applyRenlakFilters()">
+                                <option value="ALL">Semua Status</option>
+                                <option value="Selesai">Selesai</option>
+                                <option value="Berjalan">Berjalan</option>
+                                <option value="Belum Dimulai">Belum Dimulai</option>
+                                <option value="Terlambat">Terlambat</option>
+                            </select>
+                        </div>
+                        <!-- Filter Tahun -->
+                        <div class="col-6 col-md-1">
+                            <select id="renlakFilterTahun" class="form-select form-select-sm" onchange="applyRenlakFilters()">
+                                <option value="ALL" selected>2026-27</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                            </select>
+                        </div>
+                        <!-- Filter Periode Bulan -->
+                        <div class="col-6 col-md-2">
+                            <select id="renlakFilterPeriode" class="form-select form-select-sm" onchange="applyRenlakFilters()">
+                                <option value="EXCEL_DEFAULT" selected>Periode Aktif (Sep '26 - Des '27)</option>
+                                <option value="FULL_JAN_DEC">Penuh (Jan '26 - Des '27)</option>
+                                <option value="Q1">Triwulan I</option>
+                                <option value="Q2">Triwulan II</option>
+                                <option value="Q3">Triwulan III</option>
+                                <option value="Q4">Triwulan IV</option>
+                                <option value="M_1">Januari</option>
+                                <option value="M_2">Februari</option>
+                                <option value="M_3">Maret</option>
+                                <option value="M_4">April</option>
+                                <option value="M_5">Mei</option>
+                                <option value="M_6">Juni</option>
+                                <option value="M_7">Juli</option>
+                                <option value="M_8">Agustus</option>
+                                <option value="M_9">September</option>
+                                <option value="M_10">Oktober</option>
+                                <option value="M_11">November</option>
+                                <option value="M_12">Desember</option>
+                            </select>
+                        </div>
+                        <!-- Mode Timeline & Jumlah Minggu -->
+                        <div class="col-12 col-md-2">
+                            <div class="d-flex gap-1">
+                                <select id="renlakTimelineMode" class="form-select form-select-sm" onchange="renderRenlakAll()">
+                                    <option value="EXCEL_SPLIT" selected>Matriks Split</option>
+                                    <option value="GANTT_UNIFIED">Gantt Terpadu</option>
+                                </select>
+                                <select id="renlakWeeksPerMonth" class="form-select form-select-sm" style="max-width: 68px;" onchange="renderRenlakAll()">
+                                    <option value="4" selected>4 Mg</option>
+                                    <option value="5">5 Mg</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. SUB-NAVIGATION TABS (MINIMALIST TABS & QUIET LEGEND) -->
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                    <div class="renlak-minimal-tabs mb-0">
+                        <button type="button" class="renlak-tab-link active" id="btnRenlakTabMatrix" onclick="switchRenlakWorkspaceTab('matrix')">
+                            Tabel &amp; Timeline Gantt
+                        </button>
+                        <button type="button" class="renlak-tab-link" id="btnRenlakTabMonev" onclick="switchRenlakWorkspaceTab('monev')">
+                            Monitoring &amp; Evaluasi
+                        </button>
+                        <button type="button" class="renlak-tab-link" id="btnRenlakTabHistory" onclick="switchRenlakWorkspaceTab('history')">
+                            Riwayat Perubahan (<span id="renlakAuditCountBadge">0</span>)
+                        </button>
+                    </div>
+
+                    <!-- Legend & Horizontal Scroll Controls -->
+                    <div class="d-flex flex-wrap align-items-center gap-2 small text-muted" id="renlakMatrixLegendBar">
+                        <span class="d-inline-flex align-items-center gap-1" style="font-size: 0.76rem;">
+                            <span style="width: 9px; height: 9px; background: #3b82f6; border-radius: 2px; display: inline-block;"></span> Rencana
+                        </span>
+                        <span class="d-inline-flex align-items-center gap-1" style="font-size: 0.76rem;">
+                            <span style="width: 9px; height: 9px; background: #10b981; border-radius: 2px; display: inline-block;"></span> Realisasi
+                        </span>
+                        <span class="d-inline-flex align-items-center gap-1" style="font-size: 0.76rem;">
+                            <span style="width: 9px; height: 9px; background: #f59e0b; border-radius: 2px; display: inline-block;"></span> Berjalan
+                        </span>
+                        <span class="d-inline-flex align-items-center gap-1" style="font-size: 0.76rem;">
+                            <span style="width: 9px; height: 9px; background: #ef4444; border-radius: 2px; display: inline-block;"></span> Terlambat
+                        </span>
+                        <div class="btn-group btn-group-sm ms-2">
+                            <button type="button" class="btn btn-outline-secondary py-0 px-2" onclick="scrollRenlakTimeline(-380)" title="Geser Kiri">&lsaquo;</button>
+                            <button type="button" class="btn btn-outline-secondary py-0 px-2" onclick="scrollRenlakTimeline(380)" title="Geser Kanan">&rsaquo;</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================================================================= -->
+                <!-- WORKSPACE TAB 1: TABEL & TIMELINE GANTT CHART (2026 - 2027)       -->
+                <!-- ================================================================= -->
+                <div id="renlakTabContentMatrix">
+                    <div class="renlak-matrix-card">
+                        <div class="px-3 py-2 border-bottom d-flex flex-wrap align-items-center justify-content-between gap-2" style="background: #f8fafc;">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fw-bold" style="color: #034284; font-size: 0.82rem;">
+                                    <i class="ti ti-table me-1"></i> MATRIKS RENCANA PELAKSANAAN &amp; REALISASI KEGIATAN LABORATORIUM
+                                </span>
+                                <span class="badge bg-label-info" style="font-size: 0.7rem;">
+                                    <i class="ti ti-hand-click me-1"></i> Klik sel minggu untuk mengisi / mengubah angka jadwal secara cepat
+                                </span>
+                            </div>
+                            <div class="text-muted" style="font-size: 0.75rem;" id="renlakShowingInfoLabel">
+                                Menampilkan 11 kegiatan
+                            </div>
+                        </div>
+
+                        <div class="renlak-matrix-scroll" id="renlakTimelineScrollContainer">
+                            <table class="renlak-table" id="renlakMainTable">
+                                <thead id="renlakMainThead"></thead>
+                                <tbody id="renlakMainTbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================================================================= -->
+                <!-- WORKSPACE TAB 2: MONITORING, EVALUASI & GRAFIK PROGRES            -->
+                <!-- ================================================================= -->
+                <div id="renlakTabContentMonev" style="display: none;">
+                    <div class="row g-3 mb-3">
+                        <!-- Grafik Perbandingan Target vs Realisasi -->
+                        <div class="col-12 col-lg-8">
+                            <div class="card border shadow-none h-100" style="border-radius: 12px;">
+                                <div class="card-header d-flex align-items-center justify-content-between py-3 px-3 border-bottom">
+                                    <div>
+                                        <h6 class="fw-bold mb-0" style="color: #034284;">
+                                            <i class="ti ti-chart-bar me-1"></i> Grafik Perbandingan Target vs Realisasi Kegiatan
+                                        </h6>
+                                        <small class="text-muted">Perbandingan langsung jumlah Target, Realisasi, dan Persentase Capaian (%) tiap kegiatan</small>
+                                    </div>
+                                    <span class="badge bg-label-primary">Real-Time Chart</span>
+                                </div>
+                                <div class="card-body p-3">
+                                    <div style="height: 310px; position: relative;">
+                                        <canvas id="chartRenlakTargetRealisasi"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Grafik Distribusi Status & Capaian per Kategori -->
+                        <div class="col-12 col-lg-4">
+                            <div class="card border shadow-none h-100" style="border-radius: 12px;">
+                                <div class="card-header py-3 px-3 border-bottom">
+                                    <h6 class="fw-bold mb-0" style="color: #034284;">
+                                        <i class="ti ti-chart-donut-3 me-1"></i> Distribusi Status Kegiatan
+                                    </h6>
+                                    <small class="text-muted">Proporsi kegiatan Belum Dimulai, Berjalan, Selesai &amp; Terlambat</small>
+                                </div>
+                                <div class="card-body p-3 d-flex flex-column justify-content-between">
+                                    <div style="height: 205px; position: relative;">
+                                        <canvas id="chartRenlakStatusPie"></canvas>
+                                    </div>
+                                    <div id="renlakCategorySummaryBox" class="mt-3 pt-2 border-top"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabel Monitoring & Evaluasi Cepat (Pengaturan Target, Realisasi & Status) -->
+                    <div class="card border shadow-none" style="border-radius: 12px;">
+                        <div class="card-header d-flex flex-wrap align-items-center justify-content-between py-3 px-3 border-bottom">
+                            <div>
+                                <h6 class="fw-bold mb-0" style="color: #034284;">
+                                    <i class="ti ti-adjustments-horizontal me-1"></i> Panel Monitoring Realisasi &amp; Evaluasi Capaian Kegiatan
+                                </h6>
+                                <small class="text-muted">Ubah nilai Realisasi, Target, atau Status secara langsung untuk memperbarui Persentase Capaian otomatis</small>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="openRenlakModal()">
+                                <i class="ti ti-plus me-1"></i> Tambah Kegiatan Baru
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered align-middle mb-0" style="font-size: 0.82rem;">
+                                <thead style="background: #f1f5f9;">
+                                    <tr>
+                                        <th class="text-center" style="width: 50px;">No.</th>
+                                        <th style="min-width: 240px;">Nama Kegiatan / Sasaran</th>
+                                        <th style="width: 170px;">Kategori</th>
+                                        <th class="text-center" style="width: 110px;">Realisasi</th>
+                                        <th class="text-center" style="width: 110px;">Target</th>
+                                        <th class="text-center" style="width: 90px;">Satuan</th>
+                                        <th style="width: 165px;">Persentase Capaian</th>
+                                        <th style="min-width: 190px;">Jadwal Pelaksanaan</th>
+                                        <th class="text-center" style="width: 145px;">Status Kegiatan</th>
+                                        <th class="text-center" style="width: 115px;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="renlakMonevTbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================================================================= -->
+                <!-- WORKSPACE TAB 3: RIWAYAT PERUBAHAN KEGIATAN (AUDIT TRAIL)         -->
+                <!-- ================================================================= -->
+                <div id="renlakTabContentHistory" style="display: none;">
+                    <div class="card border shadow-none" style="border-radius: 12px;">
+                        <div class="card-header d-flex flex-wrap align-items-center justify-content-between py-3 px-3 border-bottom">
+                            <div>
+                                <h6 class="fw-bold mb-0" style="color: #034284;">
+                                    <i class="ti ti-history me-1"></i> Riwayat Perubahan Kegiatan (Audit Trail RENLAK)
+                                </h6>
+                                <small class="text-muted">Rekam jejak seluruh penambahan, pembaruan target/realisasi, jadwal minggu, dan penghapusan kegiatan</small>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="loadRenlakData()">
+                                <i class="ti ti-refresh me-1"></i> Segarkan Log
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered align-middle mb-0" style="font-size: 0.82rem;">
+                                <thead style="background: #f1f5f9;">
+                                    <tr>
+                                        <th style="width: 160px;">Waktu Perubahan</th>
+                                        <th style="width: 150px;">Pengguna</th>
+                                        <th style="width: 140px;">Aksi</th>
+                                        <th style="width: 240px;">Nama Kegiatan</th>
+                                        <th>Rincian Perubahan</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="renlakAuditTbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================================================================= -->
+                <!-- MODAL TAMBAH / EDIT KEGIATAN RENLAK                               -->
+                <!-- ================================================================= -->
+                <div class="modal fade" id="modalRenlakForm" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                        <div class="modal-content" style="border-radius: 14px;">
+                            <div class="modal-header" style="background: #034284; color: #ffffff;">
+                                <h5 class="modal-title fw-bold text-white" id="modalRenlakFormTitle">
+                                    <i class="ti ti-calendar-plus me-1"></i> Tambah Kegiatan RENLAK
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <form id="formRenlakActivity" onsubmit="event.preventDefault(); saveRenlakForm();">
+                                    <input type="hidden" id="renlakInputId" value="0">
+
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-12 col-md-2">
+                                            <label class="form-label fw-bold small">Nomor Urut <span class="text-danger">*</span></label>
+                                            <input type="number" id="renlakInputNomor" class="form-control" min="1" value="1" required>
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label fw-bold small">Kategori Kegiatan <span class="text-danger">*</span></label>
+                                            <input type="text" id="renlakInputKategori" class="form-control" list="renlakKategoriOptions" placeholder="Pilih atau ketik kategori..." required>
+                                            <datalist id="renlakKategoriOptions">
+                                                <option value="Perencanaan"></option>
+                                                <option value="Pengembangan Digitalisasi LAB"></option>
+                                                <option value="Monitoring dan Evaluasi"></option>
+                                            </datalist>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <label class="form-label fw-bold small">Nama Kegiatan / Sasaran <span class="text-danger">*</span></label>
+                                            <input type="text" id="renlakInputNama" class="form-control" placeholder="Contoh: Pembentukan Tim Digitalisasi LAB" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-6 col-md-2">
+                                            <label class="form-label fw-bold small">Realisasi <span class="text-danger">*</span></label>
+                                            <input type="number" step="any" min="0" id="renlakInputRealisasi" class="form-control fw-bold" value="0" oninput="recalcRenlakModalPercentage()" required>
+                                        </div>
+                                        <div class="col-6 col-md-2">
+                                            <label class="form-label fw-bold small">Target <span class="text-danger">*</span></label>
+                                            <input type="number" step="any" min="0.01" id="renlakInputTarget" class="form-control fw-bold" value="1" oninput="recalcRenlakModalPercentage()" required>
+                                        </div>
+                                        <div class="col-6 col-md-2">
+                                            <label class="form-label fw-bold small">Satuan <span class="text-danger">*</span></label>
+                                            <input type="text" id="renlakInputSatuan" class="form-control" list="renlakSatuanOptions" placeholder="SK / Dokumen / Fitur" required>
+                                            <datalist id="renlakSatuanOptions">
+                                                <option value="SK"></option>
+                                                <option value="Dokumen"></option>
+                                                <option value="Database"></option>
+                                                <option value="Aplikasi"></option>
+                                                <option value="Fitur"></option>
+                                                <option value="Persen"></option>
+                                                <option value="Kegiatan"></option>
+                                                <option value="Laporan"></option>
+                                            </datalist>
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <label class="form-label fw-bold small">% Capaian (Otomatis)</label>
+                                            <div class="input-group">
+                                                <input type="text" id="renlakInputPersenPreview" class="form-control fw-bold text-success" style="background: #dcfce7;" value="0.00%" readonly>
+                                                <span class="input-group-text bg-success text-white fw-bold"><i class="ti ti-percentage"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-3">
+                                            <label class="form-label fw-bold small">Status Kegiatan</label>
+                                            <select id="renlakInputStatus" class="form-select fw-semibold">
+                                                <option value="AUTO">Otomatis (Sesuai Realisasi &amp; Jadwal)</option>
+                                                <option value="Belum Dimulai">Belum Dimulai</option>
+                                                <option value="Berjalan">Berjalan</option>
+                                                <option value="Selesai">Selesai</option>
+                                                <option value="Terlambat">Terlambat</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-12 col-md-6">
+                                            <label class="form-label fw-bold small">Rencana Kegiatan / Deskripsi Uraian</label>
+                                            <textarea id="renlakInputRencanaText" class="form-control" rows="2" placeholder="Uraian rencana pelaksanaan kegiatan..."></textarea>
+                                        </div>
+                                        <div class="col-12 col-md-3">
+                                            <label class="form-label fw-bold small">Penanggung Jawab (PIC)</label>
+                                            <input type="text" id="renlakInputPic" class="form-control" placeholder="Contoh: Tim Digitalisasi Lab">
+                                        </div>
+                                        <div class="col-12 col-md-3">
+                                            <label class="form-label fw-bold small">Catatan Monitoring &amp; Evaluasi</label>
+                                            <textarea id="renlakInputCatatan" class="form-control" rows="2" placeholder="Catatan evaluasi / kendala..."></textarea>
+                                        </div>
+                                    </div>
+
+                                    <!-- Interactive Weekly Schedule Builder (2026 & 2027) -->
+                                    <div class="border rounded-3 p-3" style="background: #f8fafc;">
+                                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2 pb-2 border-bottom">
+                                            <div>
+                                                <h6 class="fw-bold mb-0" style="color: #034284;">
+                                                    <i class="ti ti-calendar-week me-1"></i> Pengaturan Jadwal Pelaksanaan Mingguan (Tahun 2026 &amp; 2027)
+                                                </h6>
+                                                <small class="text-muted">Klik tombol minggu (M1&ndash;M5) pada bulan terkait untuk menandai/menghapus jadwal <strong>Rencana</strong> maupun <strong>Realisasi</strong>.</small>
+                                            </div>
+                                            <div class="d-flex flex-wrap align-items-center gap-2">
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <button type="button" class="btn btn-primary active" id="btnPickerModePlan" onclick="switchModalScheduleMode('plan')">
+                                                        <i class="ti ti-calendar-event me-1"></i> Edit Jadwal RENCANA
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-success" id="btnPickerModeReal" onclick="switchModalScheduleMode('real')">
+                                                        <i class="ti ti-checks me-1"></i> Edit Jadwal REALISASI
+                                                    </button>
+                                                </div>
+                                                <select id="modalScheduleYearSelect" class="form-select form-select-sm" style="width: 130px;" onchange="renderModalSchedulePickerGrid()">
+                                                    <option value="2026">Tahun 2026</option>
+                                                    <option value="2027">Tahun 2027</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div id="modalSchedulePickerContainer" class="row g-2"></div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer bg-light">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                                <button type="button" class="btn btn-primary fw-bold px-4" onclick="saveRenlakForm()">
+                                    <i class="ti ti-device-floppy me-1"></i> Simpan Kegiatan RENLAK
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================================================================= -->
+                <!-- MODAL DETAIL KEGIATAN RENLAK                                      -->
+                <!-- ================================================================= -->
+                <div class="modal fade" id="modalRenlakDetail" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content" style="border-radius: 14px;">
+                            <div class="modal-header" style="background: #034284; color: #ffffff;">
+                                <h5 class="modal-title fw-bold text-white">
+                                    <i class="ti ti-file-analytics me-1"></i> Detail Kegiatan &amp; Evaluasi RENLAK
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4" id="modalRenlakDetailBody"></div>
+                            <div class="modal-footer bg-light">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="button" class="btn btn-primary" id="btnDetailEditRenlak">
+                                    <i class="ti ti-edit me-1"></i> Edit Kegiatan Ini
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- / #section-perencanaan -->
+
             <!-- Sub-Pages Navigation Bar khusus Menu 3: Pelaksanaan Pengujian Sampel -->
             <div id="pengujianSubNavBar" class="subpage-nav-bar" style="display: none;">
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2 pb-2 border-bottom">
@@ -2164,12 +3185,12 @@
                         </span>
                         <h3 class="fw-bold mt-2 mb-2" style="color: #034284;" id="underDevTitle">Nama Modul</h3>
                         <p class="text-muted mx-auto mb-4" style="max-width: 580px; font-size: 0.95rem;" id="underDevDesc">
-                            Modul ini sedang dalam tahap pengembangan dan integrasi pada ekosistem <strong>Digitalisasi Lab BBPOM di Bandung</strong>.
+                            Modul ini sedang dalam tahap pengembangan dan integrasi pada ekosistem <strong>DigitLab BDG &ndash; BBPOM di Bandung</strong>.
                         </p>
 
                         <div class="mx-auto mb-4 p-3 rounded border bg-light" style="max-width: 480px;">
                             <div class="d-flex justify-content-between small fw-bold mb-1">
-                                <span class="text-secondary">Status Integrasi Sistem Digitalisasi Lab</span>
+                                <span class="text-secondary">Status Integrasi Sistem DigitLab BDG</span>
                                 <span class="text-primary">Tahap Pengembangan (20%)</span>
                             </div>
                             <div class="progress" style="height: 8px;">
@@ -3517,8 +4538,8 @@
     
     <script>
         const MENU_META = {
-            dashboard:   { title: 'Dashboard Digitalisasi Lab', icon: 'ti-home', desc: '' },
-            perencanaan: { title: 'Perencanaan Laboratorium', icon: 'ti-calendar-stats', desc: 'Modul Perencanaan Sampling, Jadwal Pengujian Tahunan, dan Alokasi Anggaran Laboratorium sedang dalam tahap pengembangan.' },
+            dashboard:   { title: 'Dashboard DigitLab BDG', icon: 'ti-home', desc: '' },
+            perencanaan: { title: 'Perencanaan Laboratorium (RENLAK)', icon: 'ti-calendar-stats', desc: 'Sistem Rencana Pelaksanaan & Kegiatan Digitalisasi Laboratorium BBPOM di Bandung (2026–2027).' },
             pengujian:   { title: 'Pelaksanaan Pengujian Sampel', icon: 'ti-flask-2', desc: 'Modul Pelaksanaan Pengujian Sampel terintegrasi dari penerimaan sampel hingga pengesahan hasil uji.' },
             instrumen:   { title: 'Pengelolaan Instrumen', icon: 'ti-microscope', desc: 'Modul Inventarisasi Instrumen Lab, Jadwal Kalibrasi, Log Penggunaan Alat, dan Pemeliharaan Berkala sedang dalam tahap pengembangan.' },
             inventor:    { title: 'Pengelolaan Inventor', icon: 'ti-packages', desc: 'Modul Pengelolaan Stok Reagen, Baku Pembanding, Media Mikrobiologi, dan Peringatan Kedaluwarsa sedang dalam tahap pengembangan.' },
@@ -3618,12 +4639,14 @@
 
             // Toggle visible sections
             const secDash = document.getElementById('section-dashboard');
+            const secRenlak = document.getElementById('section-perencanaan');
             const secAko = document.getElementById('section-akomodasi');
             const secDev = document.getElementById('section-under-dev');
             const secHuls = document.getElementById('section-huls');
             const subNavBar = document.getElementById('pengujianSubNavBar');
 
             if (secDash) secDash.style.display = 'none';
+            if (secRenlak) secRenlak.style.display = 'none';
             if (secAko) secAko.style.display = 'none';
             if (subNavBar) subNavBar.style.display = 'block';
 
@@ -3673,13 +4696,14 @@
             }
 
             const secDash = document.getElementById('section-dashboard');
+            const secRenlak = document.getElementById('section-perencanaan');
             const secAko = document.getElementById('section-akomodasi');
             const secDev = document.getElementById('section-under-dev');
             const secHuls = document.getElementById('section-huls');
             const subNavBar = document.getElementById('pengujianSubNavBar');
             const topTitle = document.getElementById('topbarActiveTitle');
             const devBadge = document.getElementById('underDevBadge');
-            const meta = MENU_META[menuKey] || { title: 'Digitalisasi Lab', icon: 'ti-settings-automation', desc: 'Modul sedang dalam pengembangan.' };
+            const meta = MENU_META[menuKey] || { title: 'DigitLab BDG', icon: 'ti-settings-automation', desc: 'Modul sedang dalam pengembangan.' };
 
             if (subNavBar) subNavBar.style.display = 'none';
             if (secHuls) secHuls.style.display = 'none';
@@ -3691,10 +4715,20 @@
 
             if (menuKey === 'dashboard') {
                 if (secDash) secDash.style.display = 'block';
+                if (secRenlak) secRenlak.style.display = 'none';
                 if (secAko) secAko.style.display = 'none';
                 if (secDev) secDev.style.display = 'none';
+            } else if (menuKey === 'perencanaan') {
+                if (secDash) secDash.style.display = 'none';
+                if (secRenlak) secRenlak.style.display = 'block';
+                if (secAko) secAko.style.display = 'none';
+                if (secDev) secDev.style.display = 'none';
+                if (typeof loadRenlakData === 'function') {
+                    loadRenlakData();
+                }
             } else if (menuKey === 'akomodasi') {
                 if (secDash) secDash.style.display = 'none';
+                if (secRenlak) secRenlak.style.display = 'none';
                 if (secAko) secAko.style.display = 'block';
                 if (secDev) secDev.style.display = 'none';
                 setTimeout(() => {
@@ -3702,6 +4736,7 @@
                 }, 60);
             } else {
                 if (secDash) secDash.style.display = 'none';
+                if (secRenlak) secRenlak.style.display = 'none';
                 if (secAko) secAko.style.display = 'none';
                 if (secDev) secDev.style.display = 'block';
 
@@ -6173,37 +7208,1708 @@
             }
         };
 
-        document.addEventListener('DOMContentLoaded', function () {
-            // Initialize default HULS form values immediately
-            populateHulsForm(HULS_DEFAULT_DOC);
-            // Initialize Dummy Chart for Dashboard Utama
-            const ctxKom = document.getElementById('chartDashboardKomoditi');
-            if (ctxKom && window.Chart) {
-                new Chart(ctxKom, {
+        // =========================================================================
+        // MODUL PERENCANAAN LABORATORIUM (RENLAK 2026 - 2027) — FULL ENGINE
+        // =========================================================================
+        const RENLAK_MONTH_NAMES = {
+            1: 'Januari', 2: 'Februari', 3: 'Maret', 4: 'April',
+            5: 'Mei', 6: 'Juni', 7: 'Juli', 8: 'Agustus',
+            9: 'September', 10: 'Okt', 11: 'November', 12: 'Desember'
+        };
+
+        const RENLAK_DEFAULT_SEED = [
+            {
+                id: 1,
+                nomor_urut: 1,
+                kategori: 'Perencanaan',
+                nama_kegiatan: 'Pembentukan Tim Digitalisasi LAB',
+                rencana_kegiatan: 'Penyusunan dan penetapan SK Tim Digitalisasi Laboratorium BBPOM di Bandung (September 2026 Minggu ke-1)',
+                realisasi: 1,
+                target: 1,
+                satuan: 'SK',
+                persentase_capaian: 100.00,
+                status_kegiatan: 'Selesai',
+                tahun_awal: 2026,
+                tahun_akhir: 2027,
+                jadwal_rencana: { '2026': { '9': { '1': 1 } }, '2027': {} },
+                jadwal_realisasi: { '2026': { '10': { '4': 1 } }, '2027': {} },
+                catatan_evaluasi: 'SK Tim Digitalisasi LAB telah ditetapkan dan terealisasi 100%.',
+                pic_penanggung_jawab: 'Manajer Puncak / Ketua Tim Digitalisasi'
+            },
+            {
+                id: 2,
+                nomor_urut: 2,
+                kategori: 'Perencanaan',
+                nama_kegiatan: 'Penyusunan Program Kerja Tim Digitalisasi LAB',
+                rencana_kegiatan: 'Penyusunan dokumen Program Kerja & Roadmap Tim Digitalisasi LAB (Oktober 2026 Minggu ke-3)',
+                realisasi: 1,
+                target: 1,
+                satuan: 'Dokumen',
+                persentase_capaian: 100.00,
+                status_kegiatan: 'Selesai',
+                tahun_awal: 2026,
+                tahun_akhir: 2027,
+                jadwal_rencana: { '2026': { '10': { '3': 1 } }, '2027': {} },
+                jadwal_realisasi: { '2026': { '10': { '4': 1 } }, '2027': {} },
+                catatan_evaluasi: 'Dokumen Program Kerja Tim Digitalisasi LAB telah disahkan.',
+                pic_penanggung_jawab: 'Koordinator Perencanaan Digitalisasi'
+            },
+            {
+                id: 3,
+                nomor_urut: 4,
+                kategori: 'Pengembangan Digitalisasi LAB',
+                nama_kegiatan: 'Pengembangan DATA BASE Fitur Digitalisasi LAB',
+                rencana_kegiatan: 'Perancangan dan integrasi 6 modul database utama fitur Digitalisasi LAB secara bertahap (2026–2027)',
+                realisasi: 2,
+                target: 6,
+                satuan: 'Database',
+                persentase_capaian: 33.33,
+                status_kegiatan: 'Berjalan',
+                tahun_awal: 2026,
+                tahun_akhir: 2027,
+                jadwal_rencana: {
+                    '2026': { '10': { '4': 2 }, '11': { '2': 1 } },
+                    '2027': { '3': { '1': 1 }, '6': { '1': 1 }, '9': { '1': 1 } }
+                },
+                jadwal_realisasi: { '2026': { '10': { '4': 2 } }, '2027': {} },
+                catatan_evaluasi: '2 dari 6 skema database modul utama telah aktif dan berjalan.',
+                pic_penanggung_jawab: 'Tim Database & Backend'
+            },
+            {
+                id: 4,
+                nomor_urut: 5,
+                kategori: 'Pengembangan Digitalisasi LAB',
+                nama_kegiatan: 'Pengembangan Aplikasi Digitalisasi LAB',
+                rencana_kegiatan: 'Pengembangan portal aplikasi terintegrasi DigitLab BDG tahap 1 (Okt 2026) dan tahap 2 (Jun 2027)',
+                realisasi: 1,
+                target: 2,
+                satuan: 'Aplikasi',
+                persentase_capaian: 50.00,
+                status_kegiatan: 'Berjalan',
+                tahun_awal: 2026,
+                tahun_akhir: 2027,
+                jadwal_rencana: {
+                    '2026': { '10': { '1': 1 } },
+                    '2027': { '6': { '1': 1 } }
+                },
+                jadwal_realisasi: { '2026': { '10': { '4': 1 } }, '2027': {} },
+                catatan_evaluasi: 'Tahap 1 aplikasi utama DigitLab BDG telah beroperasi (50%).',
+                pic_penanggung_jawab: 'Tim Pengembang Sistem'
+            },
+            {
+                id: 5,
+                nomor_urut: 6,
+                kategori: 'Pengembangan Digitalisasi LAB',
+                nama_kegiatan: 'Pengembangan Aplikasi Digitalisasi LAB - Fitur Akomodasi Lingkungan (IoT)',
+                rencana_kegiatan: 'Implementasi pemantauan suhu & kelembapan berbasis sensor IoT real-time dan laporan PDF BBPOM',
+                realisasi: 1,
+                target: 1,
+                satuan: 'Fitur',
+                persentase_capaian: 100.00,
+                status_kegiatan: 'Selesai',
+                tahun_awal: 2026,
+                tahun_akhir: 2027,
+                jadwal_rencana: { '2026': { '10': { '4': 1 } }, '2027': {} },
+                jadwal_realisasi: { '2026': { '10': { '4': 1 } }, '2027': {} },
+                catatan_evaluasi: 'Fitur Akomodasi & Lingkungan IoT selesai 100% dan telah digunakan.',
+                pic_penanggung_jawab: 'Tim IoT & Akomodasi Lingkungan'
+            },
+            {
+                id: 6,
+                nomor_urut: 7,
+                kategori: 'Pengembangan Digitalisasi LAB',
+                nama_kegiatan: 'Pengembangan Aplikasi Digitalisasi LAB - Fitur Pelaksanaan Pengujian dan LIMS',
+                rencana_kegiatan: 'Pengembangan modul pengelolaan sampel, status pengujian, integrasi LIMS, reagen, dan HULS',
+                realisasi: 0,
+                target: 2,
+                satuan: 'Fitur',
+                persentase_capaian: 0.00,
+                status_kegiatan: 'Belum Dimulai',
+                tahun_awal: 2026,
+                tahun_akhir: 2027,
+                jadwal_rencana: { '2026': { '11': { '2': 1 }, '12': { '4': 1 } }, '2027': {} },
+                jadwal_realisasi: { '2026': {}, '2027': {} },
+                catatan_evaluasi: 'Dijadwalkan pada November M2 dan Desember M4 2026.',
+                pic_penanggung_jawab: 'Tim Pengujian & LIMS'
+            },
+            {
+                id: 7,
+                nomor_urut: 8,
+                kategori: 'Pengembangan Digitalisasi LAB',
+                nama_kegiatan: 'Pengembangan Aplikasi Digitalisasi LAB - Fitur Keamanan dan Integritas Data LAB',
+                rencana_kegiatan: 'Implementasi audit trail, otorisasi berjenjang ISO/IEC 17025, dan keamanan rekaman elektronik',
+                realisasi: 0,
+                target: 1,
+                satuan: 'Fitur',
+                persentase_capaian: 0.00,
+                status_kegiatan: 'Belum Dimulai',
+                tahun_awal: 2026,
+                tahun_akhir: 2027,
+                jadwal_rencana: { '2026': { '11': { '4': 1 } }, '2027': {} },
+                jadwal_realisasi: { '2026': {}, '2027': {} },
+                catatan_evaluasi: 'Dijadwalkan pada November Minggu ke-4 Tahun 2026.',
+                pic_penanggung_jawab: 'Tim Keamanan Data & Mutu'
+            },
+            {
+                id: 8,
+                nomor_urut: 9,
+                kategori: 'Pengembangan Digitalisasi LAB',
+                nama_kegiatan: 'Pengembangan Aplikasi Digitalisasi LAB - Fitur Pengelolaan Instrumen, Inventori & Kalibrasi',
+                rencana_kegiatan: 'Pengembangan modul inventaris instrumen lab, kartu stok inventori, dan jadwal kalibrasi berkala',
+                realisasi: 0,
+                target: 3,
+                satuan: 'Fitur',
+                persentase_capaian: 0.00,
+                status_kegiatan: 'Belum Dimulai',
+                tahun_awal: 2026,
+                tahun_akhir: 2027,
+                jadwal_rencana: {
+                    '2026': { '11': { '4': 1 } },
+                    '2027': { '1': { '1': 1 }, '2': { '1': 1 } }
+                },
+                jadwal_realisasi: { '2026': {}, '2027': {} },
+                catatan_evaluasi: 'Dijadwalkan bertahap mulai Nov 2026 hingga Feb 2027.',
+                pic_penanggung_jawab: 'Tim Instrumen & Kalibrasi'
+            },
+            {
+                id: 9,
+                nomor_urut: 10,
+                kategori: 'Pengembangan Digitalisasi LAB',
+                nama_kegiatan: 'Pengembangan Aplikasi Digitalisasi LAB - Fitur Metode, Validasi, Mutu & Kompetensi SDM',
+                rencana_kegiatan: 'Pengembangan modul dokumen metode analisis, validasi/verifikasi, IQC mutu, dan matriks SDM',
+                realisasi: 0,
+                target: 4,
+                satuan: 'Fitur',
+                persentase_capaian: 0.00,
+                status_kegiatan: 'Belum Dimulai',
+                tahun_awal: 2026,
+                tahun_akhir: 2027,
+                jadwal_rencana: {
+                    '2026': { '12': { '1': 1 } },
+                    '2027': { '1': { '3': 1 }, '2': { '3': 1 }, '3': { '4': 1 } }
+                },
+                jadwal_realisasi: { '2026': {}, '2027': {} },
+                catatan_evaluasi: 'Dijadwalkan mulai Desember 2026 hingga Maret 2027.',
+                pic_penanggung_jawab: 'Tim Jaminan Mutu & SDM'
+            },
+            {
+                id: 10,
+                nomor_urut: 1,
+                kategori: 'Monitoring dan Evaluasi',
+                nama_kegiatan: 'Rekon Data, Monitoring dan Evaluasi DIGITLAB',
+                rencana_kegiatan: 'Rekonsiliasi data bulanan serta monitoring dan evaluasi rutin implementasi DIGITLAB (Nov 2026–Sep 2027)',
+                realisasi: 0,
+                target: 11,
+                satuan: 'Persen',
+                persentase_capaian: 0.00,
+                status_kegiatan: 'Belum Dimulai',
+                tahun_awal: 2026,
+                tahun_akhir: 2027,
+                jadwal_rencana: {
+                    '2026': { '11': { '3': 1 }, '12': { '3': 1 } },
+                    '2027': {
+                        '1': { '3': 1 }, '2': { '4': 1 }, '3': { '4': 1 },
+                        '4': { '4': 1 }, '5': { '4': 1 }, '6': { '4': 1 },
+                        '7': { '3': 1 }, '8': { '3': 1 }, '9': { '3': 1 }
+                    }
+                },
+                jadwal_realisasi: { '2026': {}, '2027': {} },
+                catatan_evaluasi: 'Monitoring berkala setiap bulan dari Nov 2026 s.d. Sep 2027.',
+                pic_penanggung_jawab: 'Tim Monev Digitalisasi Lab'
+            },
+            {
+                id: 11,
+                nomor_urut: 2,
+                kategori: 'Monitoring dan Evaluasi',
+                nama_kegiatan: 'Tinjau Ulang Manajemen DIGITLAB',
+                rencana_kegiatan: 'Rapat Tinjauan Manajemen (RTM) evaluasi menyeluruh sistem Digitalisasi Laboratorium',
+                realisasi: 0,
+                target: 1,
+                satuan: 'Persen',
+                persentase_capaian: 0.00,
+                status_kegiatan: 'Belum Dimulai',
+                tahun_awal: 2026,
+                tahun_akhir: 2027,
+                jadwal_rencana: { '2026': {}, '2027': { '1': { '2': 1 } } },
+                jadwal_realisasi: { '2026': {}, '2027': {} },
+                catatan_evaluasi: 'Dijadwalkan pada Januari 2027 Minggu ke-2.',
+                pic_penanggung_jawab: 'Manajer Mutu & Kepala BBPOM'
+            }
+        ];
+
+        const RENLAK_STORAGE_KEY = 'digitlab_bdg_renlak_v1';
+        const RENLAK_AUDIT_STORAGE_KEY = 'digitlab_bdg_renlak_audit_v1';
+
+        let renlakActivities = JSON.parse(JSON.stringify(RENLAK_DEFAULT_SEED));
+        let renlakAuditLogs = [];
+        let renlakActiveWorkspaceTab = 'matrix';
+        let chartRenlakBarInstance = null;
+        let chartRenlakPieInstance = null;
+
+        // Modal schedule picker state
+        let modalTempJadwalRencana = { '2026': {}, '2027': {} };
+        let modalTempJadwalRealisasi = { '2026': {}, '2027': {} };
+        let modalScheduleEditMode = 'plan'; // 'plan' | 'real'
+
+        function escapeRenlakHtml(str) {
+            return String(str ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function calcRenlakPercent(realisasi, target) {
+            const r = parseFloat(realisasi) || 0;
+            const t = parseFloat(target) || 0;
+            if (t <= 0) return 0;
+            return Math.round((r / t) * 10000) / 100;
+        }
+
+        function determineRenlakAutoStatus(act) {
+            const pct = calcRenlakPercent(act.realisasi, act.target);
+            if (pct >= 100) return 'Selesai';
+            if (pct > 0) return 'Berjalan';
+
+            // Check if any planned week is before October 2026 W4 (reference date 29-Oct-26) with 0 realization
+            const plan2026 = (act.jadwal_rencana && act.jadwal_rencana['2026']) ? act.jadwal_rencana['2026'] : {};
+            let hasPastPlan = false;
+            Object.keys(plan2026).forEach(mStr => {
+                const m = parseInt(mStr, 10);
+                if (m < 10) {
+                    const wks = plan2026[mStr] || {};
+                    Object.values(wks).forEach(v => { if (parseFloat(v) > 0) hasPastPlan = true; });
+                } else if (m === 10) {
+                    const wks = plan2026[mStr] || {};
+                    ['1', '2', '3'].forEach(w => { if (parseFloat(wks[w]) > 0) hasPastPlan = true; });
+                }
+            });
+            if (hasPastPlan && (parseFloat(act.realisasi) || 0) <= 0) {
+                return 'Terlambat';
+            }
+            return 'Belum Dimulai';
+        }
+
+        function summarizeRenlakScheduleText(jadwalObj) {
+            if (!jadwalObj || typeof jadwalObj !== 'object') return '-';
+            const parts = [];
+            ['2026', '2027'].forEach(yr => {
+                const yrMap = jadwalObj[yr];
+                if (!yrMap || typeof yrMap !== 'object') return;
+                const mKeys = Object.keys(yrMap).map(Number).sort((a, b) => a - b);
+                mKeys.forEach(m => {
+                    const wMap = yrMap[String(m)];
+                    if (!wMap || typeof wMap !== 'object') return;
+                    const activeWeeks = Object.keys(wMap)
+                        .filter(w => parseFloat(wMap[w]) > 0)
+                        .sort((a, b) => Number(a) - Number(b))
+                        .map(w => 'M' + w + (parseFloat(wMap[w]) > 1 ? '(' + wMap[w] + ')' : ''));
+                    if (activeWeeks.length > 0) {
+                        parts.push(`${RENLAK_MONTH_NAMES[m] || ('Bln ' + m)} ${yr}: ${activeWeeks.join(', ')}`);
+                    }
+                });
+            });
+            return parts.length > 0 ? parts.join(' | ') : 'Belum dijadwalkan';
+        }
+
+        function normalizeRenlakActivityList(rawList) {
+            if (!Array.isArray(rawList) || rawList.length === 0) {
+                return JSON.parse(JSON.stringify(RENLAK_DEFAULT_SEED));
+            }
+            return rawList.map((item, idx) => {
+                const real = parseFloat(item.realisasi) || 0;
+                const targ = parseFloat(item.target) || 0;
+                const pct = calcRenlakPercent(real, targ);
+                const jr = (item.jadwal_rencana && typeof item.jadwal_rencana === 'object')
+                    ? item.jadwal_rencana
+                    : { '2026': {}, '2027': {} };
+                const jreal = (item.jadwal_realisasi && typeof item.jadwal_realisasi === 'object')
+                    ? item.jadwal_realisasi
+                    : { '2026': {}, '2027': {} };
+
+                const normalized = {
+                    id: parseInt(item.id, 10) || (idx + 1),
+                    nomor_urut: parseInt(item.nomor_urut, 10) || (idx + 1),
+                    kategori: item.kategori || 'Pengembangan Digitalisasi LAB',
+                    nama_kegiatan: item.nama_kegiatan || '',
+                    rencana_kegiatan: item.rencana_kegiatan || '',
+                    realisasi: real,
+                    target: targ,
+                    satuan: item.satuan || 'Fitur',
+                    persentase_capaian: pct,
+                    status_kegiatan: item.status_kegiatan || 'Belum Dimulai',
+                    tahun_awal: parseInt(item.tahun_awal, 10) || 2026,
+                    tahun_akhir: parseInt(item.tahun_akhir, 10) || 2027,
+                    jadwal_rencana: jr,
+                    jadwal_realisasi: jreal,
+                    catatan_evaluasi: item.catatan_evaluasi || '',
+                    pic_penanggung_jawab: item.pic_penanggung_jawab || 'Tim Digitalisasi Lab'
+                };
+                if (!['Belum Dimulai', 'Berjalan', 'Selesai', 'Terlambat'].includes(normalized.status_kegiatan)) {
+                    normalized.status_kegiatan = determineRenlakAutoStatus(normalized);
+                }
+                return normalized;
+            });
+        }
+
+        function appendLocalAuditLog(actionType, actName, descText) {
+            const entry = {
+                id: Date.now(),
+                action_type: actionType,
+                nama_kegiatan: actName,
+                change_description: descText,
+                changed_by: (typeof LOGGED_IN_USER_NAME !== 'undefined' ? LOGGED_IN_USER_NAME : 'Admin Lab'),
+                created_at: new Date().toISOString().replace('T', ' ').substring(0, 19)
+            };
+            renlakAuditLogs.unshift(entry);
+            try {
+                localStorage.setItem(RENLAK_AUDIT_STORAGE_KEY, JSON.stringify(renlakAuditLogs.slice(0, 100)));
+            } catch (e) {}
+        }
+
+        window.loadRenlakData = async function() {
+            // First load any cached local state for instant responsiveness
+            try {
+                const cached = localStorage.getItem(RENLAK_STORAGE_KEY);
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        renlakActivities = normalizeRenlakActivityList(parsed);
+                    }
+                }
+                const cachedAudit = localStorage.getItem(RENLAK_AUDIT_STORAGE_KEY);
+                if (cachedAudit) {
+                    const parsedAudit = JSON.parse(cachedAudit);
+                    if (Array.isArray(parsedAudit)) renlakAuditLogs = parsedAudit;
+                }
+            } catch (e) {}
+
+            renderRenlakAll();
+
+            // Fetch authoritative data from CodeIgniter 4 Backend API
+            try {
+                const res = await fetch(`${API_BASE}/data?key=renlakData&_t=${Date.now()}`, {
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (res.ok) {
+                    const json = await res.json();
+                    if (json && json.status === 'success' && Array.isArray(json.activities) && json.activities.length > 0) {
+                        renlakActivities = normalizeRenlakActivityList(json.activities);
+                        localStorage.setItem(RENLAK_STORAGE_KEY, JSON.stringify(renlakActivities));
+                    }
+                    if (json && Array.isArray(json.audit_logs) && json.audit_logs.length > 0) {
+                        renlakAuditLogs = json.audit_logs;
+                        localStorage.setItem(RENLAK_AUDIT_STORAGE_KEY, JSON.stringify(renlakAuditLogs));
+                    }
+                    renderRenlakAll();
+                }
+            } catch (err) {
+                console.warn('RENLAK menggunakan penyimpanan sinkronisasi lokal sementara:', err);
+            }
+        };
+
+        function getVisibleTimelineMonths() {
+            const yrFilter = (document.getElementById('renlakFilterTahun')?.value || 'ALL');
+            const perFilter = (document.getElementById('renlakFilterPeriode')?.value || 'EXCEL_DEFAULT');
+
+            let months2026 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+            let months2027 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+            if (perFilter === 'EXCEL_DEFAULT') {
+                months2026 = [9, 10, 11, 12];
+                months2027 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+            } else if (perFilter === 'Q1') {
+                months2026 = [1, 2, 3];
+                months2027 = [1, 2, 3];
+            } else if (perFilter === 'Q2') {
+                months2026 = [4, 5, 6];
+                months2027 = [4, 5, 6];
+            } else if (perFilter === 'Q3') {
+                months2026 = [7, 8, 9];
+                months2027 = [7, 8, 9];
+            } else if (perFilter === 'Q4') {
+                months2026 = [10, 11, 12];
+                months2027 = [10, 11, 12];
+            } else if (perFilter.startsWith('M_')) {
+                const mNum = parseInt(perFilter.replace('M_', ''), 10);
+                if (mNum >= 1 && mNum <= 12) {
+                    months2026 = [mNum];
+                    months2027 = [mNum];
+                }
+            }
+
+            const result = [];
+            if (yrFilter === 'ALL' || yrFilter === '2026') {
+                if (months2026.length > 0) result.push({ year: '2026', months: months2026 });
+            }
+            if (yrFilter === 'ALL' || yrFilter === '2027') {
+                if (months2027.length > 0) result.push({ year: '2027', months: months2027 });
+            }
+            return result;
+        }
+
+        function getFilteredRenlakActivities() {
+            const q = (document.getElementById('renlakFilterSearch')?.value || '').trim().toLowerCase();
+            const kat = (document.getElementById('renlakFilterKategori')?.value || 'ALL');
+            const st = (document.getElementById('renlakFilterStatus')?.value || 'ALL');
+
+            return renlakActivities.filter(act => {
+                if (kat !== 'ALL' && act.kategori !== kat) return false;
+                if (st !== 'ALL' && act.status_kegiatan !== st) return false;
+                if (q !== '') {
+                    const hay = `${act.nama_kegiatan} ${act.kategori} ${act.satuan} ${act.rencana_kegiatan} ${act.pic_penanggung_jawab}`.toLowerCase();
+                    if (!hay.includes(q)) return false;
+                }
+                return true;
+            });
+        }
+
+        window.applyRenlakFilters = function() {
+            renderRenlakAll();
+        };
+
+        window.renderRenlakAll = function() {
+            const filtered = getFilteredRenlakActivities();
+            renderRenlakKpis(filtered);
+            renderRenlakMatrixTable(filtered);
+            renderRenlakMonevTab(filtered);
+            renderRenlakAuditTab();
+            if (renlakActiveWorkspaceTab === 'monev') {
+                renderRenlakCharts(filtered);
+            }
+        };
+
+        function renderRenlakKpis(list) {
+            const totalKeg = list.length;
+            let totalTarget = 0;
+            let totalReal = 0;
+            let sumPct = 0;
+            const counts = { 'Selesai': 0, 'Berjalan': 0, 'Belum Dimulai': 0, 'Terlambat': 0 };
+            const categoriesSet = new Set();
+
+            list.forEach(a => {
+                const r = parseFloat(a.realisasi) || 0;
+                const t = parseFloat(a.target) || 0;
+                const p = calcRenlakPercent(r, t);
+                a.persentase_capaian = p;
+                totalTarget += t;
+                totalReal += r;
+                sumPct += p;
+                categoriesSet.add(a.kategori);
+                const st = a.status_kegiatan || 'Belum Dimulai';
+                if (counts[st] !== undefined) counts[st]++;
+                else counts['Belum Dimulai']++;
+            });
+
+            const avgPct = totalKeg > 0 ? (sumPct / totalKeg) : 0;
+            const volPct = totalTarget > 0 ? ((totalReal / totalTarget) * 100) : 0;
+
+            const elTotal = document.getElementById('renlakKpiTotalKegiatan');
+            const elKatSub = document.getElementById('renlakKpiKategoriSub');
+            const elTarget = document.getElementById('renlakKpiTotalTarget');
+            const elReal = document.getElementById('renlakKpiTotalRealisasi');
+            const elRata = document.getElementById('renlakKpiRataCapaian');
+            const elBobot = document.getElementById('renlakKpiBobotCapaian');
+            const elBar = document.getElementById('renlakKpiProgressBar');
+
+            if (elTotal) elTotal.textContent = totalKeg;
+            if (elKatSub) elKatSub.textContent = `${categoriesSet.size} Kategori Sasaran Aktif`;
+            if (elTarget) elTarget.textContent = Number.isInteger(totalTarget) ? totalTarget : totalTarget.toFixed(2);
+            if (elReal) elReal.textContent = Number.isInteger(totalReal) ? totalReal : totalReal.toFixed(2);
+            if (elRata) elRata.textContent = `${avgPct.toFixed(2)}%`;
+            if (elBobot) elBobot.textContent = `(Vol: ${volPct.toFixed(2)}%)`;
+            if (elBar) elBar.style.width = `${Math.min(100, Math.max(0, avgPct)).toFixed(1)}%`;
+
+            const elSelesai = document.getElementById('renlakStatSelesai');
+            const elBerjalan = document.getElementById('renlakStatBerjalan');
+            const elBelum = document.getElementById('renlakStatBelum');
+            const elTerlambat = document.getElementById('renlakStatTerlambat');
+            if (elSelesai) elSelesai.textContent = counts['Selesai'];
+            if (elBerjalan) elBerjalan.textContent = counts['Berjalan'];
+            if (elBelum) elBelum.textContent = counts['Belum Dimulai'];
+            if (elTerlambat) elTerlambat.textContent = counts['Terlambat'];
+
+            const elShow = document.getElementById('renlakShowingInfoLabel');
+            if (elShow) elShow.textContent = `Menampilkan ${totalKeg} dari ${renlakActivities.length} kegiatan`;
+        }
+
+        function getRenlakStatusBadgeHtml(status) {
+            if (status === 'Selesai') {
+                return `<span class="badge-status-renlak status-selesai"><i class="ti ti-circle-check"></i> Selesai</span>`;
+            }
+            if (status === 'Berjalan') {
+                return `<span class="badge-status-renlak status-berjalan"><i class="ti ti-loader-2"></i> Berjalan</span>`;
+            }
+            if (status === 'Terlambat') {
+                return `<span class="badge-status-renlak status-terlambat"><i class="ti ti-alert-triangle"></i> Terlambat</span>`;
+            }
+            return `<span class="badge-status-renlak status-belum"><i class="ti ti-clock"></i> Belum Dimulai</span>`;
+        }
+
+        function renderRenlakMatrixTable(list) {
+            const thead = document.getElementById('renlakMainThead');
+            const tbody = document.getElementById('renlakMainTbody');
+            if (!thead || !tbody) return;
+
+            const mode = document.getElementById('renlakTimelineMode')?.value || 'EXCEL_SPLIT';
+            const weeksPerMonth = parseInt(document.getElementById('renlakWeeksPerMonth')?.value || '4', 10);
+            const yearBlocks = getVisibleTimelineMonths();
+
+            let hRow1 = `<tr class="renlak-hdr-row-1">
+                <th rowspan="3" class="renlak-sticky-1">No.</th>
+                <th rowspan="3" class="renlak-sticky-2">Nama Kegiatan/ Sasaran</th>
+                <th rowspan="3" style="min-width: 62px;">Realisasi</th>
+                <th rowspan="3" style="min-width: 58px;">Target</th>
+                <th rowspan="3" style="min-width: 74px;">Satuan</th>
+                <th rowspan="3" style="min-width: 82px;">% CAPAIAN</th>
+                <th rowspan="3" style="min-width: 210px;">Rencana Kegiatan</th>
+                <th rowspan="3" style="min-width: 170px;">Jadwal Pelaksanaan</th>
+                <th rowspan="3" style="min-width: 118px;">Status</th>
+                <th rowspan="3" style="min-width: 102px;">Aksi</th>`;
+            let hRow2 = `<tr class="renlak-hdr-row-2">`;
+            let hRow3 = `<tr class="renlak-hdr-row-3">`;
+
+            let totalTimelineCols = 0;
+
+            if (mode === 'EXCEL_SPLIT') {
+                // Block 1: RENCANA (2026 & 2027)
+                yearBlocks.forEach(yb => {
+                    const colSpanYear = yb.months.length * weeksPerMonth;
+                    totalTimelineCols += colSpanYear;
+                    hRow1 += `<th colspan="${colSpanYear}" style="background: #f1f5f9; color: #1e293b; font-weight: 600; border-bottom: 1px solid #cbd5e1;">RENCANA ${yb.year}</th>`;
+                    yb.months.forEach(m => {
+                        hRow2 += `<th colspan="${weeksPerMonth}" style="background: #f8fafc; font-size: 11px; font-weight: 600; color: #475569;">${RENLAK_MONTH_NAMES[m]}</th>`;
+                        for (let w = 1; w <= weeksPerMonth; w++) {
+                            hRow3 += `<th style="background: #f8fafc; font-size: 10px; font-weight: 500; color: #64748b; width: 24px;">${w}</th>`;
+                        }
+                    });
+                });
+
+                // Block 2: REALISASI (2026 & 2027)
+                yearBlocks.forEach(yb => {
+                    const colSpanYear = yb.months.length * weeksPerMonth;
+                    totalTimelineCols += colSpanYear;
+                    hRow1 += `<th colspan="${colSpanYear}" style="background: #e2e8f0; color: #1e293b; font-weight: 600; border-bottom: 1px solid #cbd5e1;">REALISASI ${yb.year}</th>`;
+                    yb.months.forEach(m => {
+                        hRow2 += `<th colspan="${weeksPerMonth}" style="background: #f1f5f9; font-size: 11px; font-weight: 600; color: #475569;">${RENLAK_MONTH_NAMES[m]}</th>`;
+                        for (let w = 1; w <= weeksPerMonth; w++) {
+                            hRow3 += `<th style="background: #f1f5f9; font-size: 10px; font-weight: 500; color: #64748b; width: 24px;">${w}</th>`;
+                        }
+                    });
+                });
+            } else {
+                // GANTT_UNIFIED: Single timeline 2026 & 2027 combining Rencana & Realisasi
+                yearBlocks.forEach(yb => {
+                    const colSpanYear = yb.months.length * weeksPerMonth;
+                    totalTimelineCols += colSpanYear;
+                    hRow1 += `<th colspan="${colSpanYear}" style="background: #034284; color: #ffffff; font-weight: 600;">TIMELINE GANTT ${yb.year}</th>`;
+                    yb.months.forEach(m => {
+                        hRow2 += `<th colspan="${weeksPerMonth}" style="background: #f8fafc; font-size: 11px; font-weight: 600; color: #475569;">${RENLAK_MONTH_NAMES[m]} '${yb.year.slice(-2)}</th>`;
+                        for (let w = 1; w <= weeksPerMonth; w++) {
+                            hRow3 += `<th style="background: #f8fafc; font-size: 10px; font-weight: 500; color: #64748b; width: 24px;">M${w}</th>`;
+                        }
+                    });
+                });
+            }
+
+            hRow1 += `</tr>`;
+            hRow2 += `</tr>`;
+            hRow3 += `</tr>`;
+            thead.innerHTML = hRow1 + hRow2 + hRow3;
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr>
+                    <td colspan="${10 + totalTimelineCols}" class="text-center py-5 text-muted">
+                        <i class="ti ti-calendar-off fs-2 d-block mb-2"></i>
+                        Tidak ada kegiatan RENLAK yang sesuai dengan filter pencarian.
+                    </td>
+                </tr>`;
+                return;
+            }
+
+            // Group activities by Kategori while preserving order (Perencanaan -> Pengembangan Digitalisasi LAB -> Monitoring dan Evaluasi -> others)
+            const categoryOrder = ['Perencanaan', 'Pengembangan Digitalisasi LAB', 'Monitoring dan Evaluasi'];
+            const grouped = {};
+            list.forEach(item => {
+                const k = item.kategori || 'Lainnya';
+                if (!grouped[k]) grouped[k] = [];
+                grouped[k].push(item);
+            });
+
+            const orderedCategories = [
+                ...categoryOrder.filter(k => grouped[k] && grouped[k].length > 0),
+                ...Object.keys(grouped).filter(k => !categoryOrder.includes(k))
+            ];
+
+            let bodyHtml = '';
+            orderedCategories.forEach(katName => {
+                // Yellow Category Row (Exact Excel styling)
+                bodyHtml += `<tr class="renlak-category-row">
+                    <td class="renlak-sticky-1"></td>
+                    <td class="renlak-sticky-2">${escapeRenlakHtml(katName)}</td>
+                    <td colspan="${8 + totalTimelineCols}"></td>
+                </tr>`;
+
+                grouped[katName].forEach(act => {
+                    const pct = calcRenlakPercent(act.realisasi, act.target);
+                    const pctFormatted = `${pct.toFixed(2)}%`;
+                    const schedSummaryPlan = summarizeRenlakScheduleText(act.jadwal_rencana);
+                    const schedSummaryReal = summarizeRenlakScheduleText(act.jadwal_realisasi);
+                    const isCompletedRow = pct >= 100;
+                    const rowRightBg = isCompletedRow ? '#f0fdf4' : '#ffffff';
+
+                    bodyHtml += `<tr>
+                        <td class="renlak-sticky-1 text-center fw-bold">${act.nomor_urut}</td>
+                        <td class="renlak-sticky-2">
+                            <div class="fw-bold" style="color: #0f172a; line-height: 1.3;">${escapeRenlakHtml(act.nama_kegiatan)}</div>
+                            <div class="text-muted" style="font-size: 10.5px;">PIC: ${escapeRenlakHtml(act.pic_penanggung_jawab || '-')}</div>
+                        </td>
+                        <td class="text-center fw-bold" style="color: #034284;">${act.realisasi}</td>
+                        <td class="text-center fw-bold">${act.target}</td>
+                        <td class="text-center">${escapeRenlakHtml(act.satuan)}</td>
+                        <td class="renlak-cell-capaian">${pctFormatted}</td>
+                        <td style="font-size: 11px; max-width: 230px; white-space: normal; line-height: 1.3;">
+                            ${escapeRenlakHtml(act.rencana_kegiatan || '-')}
+                        </td>
+                        <td style="font-size: 10.5px; max-width: 190px; white-space: normal; line-height: 1.3;">
+                            <div><strong class="text-primary">Rencana:</strong> ${escapeRenlakHtml(schedSummaryPlan)}</div>
+                            ${schedSummaryReal !== 'Belum dijadwalkan' ? `<div class="mt-1"><strong class="text-success">Realisasi:</strong> ${escapeRenlakHtml(schedSummaryReal)}</div>` : ''}
+                        </td>
+                        <td class="text-center">${getRenlakStatusBadgeHtml(act.status_kegiatan)}</td>
+                        <td class="text-center">
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn btn-outline-info py-1 px-2" onclick="openRenlakDetailModal(${act.id})" title="Detail Kegiatan">
+                                    <i class="ti ti-eye"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-primary py-1 px-2" onclick="openRenlakModal(${act.id})" title="Edit Kegiatan">
+                                    <i class="ti ti-edit"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-danger py-1 px-2" onclick="confirmDeleteRenlak(${act.id})" title="Hapus Kegiatan">
+                                    <i class="ti ti-trash"></i>
+                                </button>
+                            </div>
+                        </td>`;
+
+                    if (mode === 'EXCEL_SPLIT') {
+                        // RENCANA CELLS
+                        yearBlocks.forEach(yb => {
+                            const yr = yb.year;
+                            yb.months.forEach(m => {
+                                for (let w = 1; w <= weeksPerMonth; w++) {
+                                    const val = act.jadwal_rencana?.[yr]?.[String(m)]?.[String(w)] ?? '';
+                                    const hasVal = val !== '' && parseFloat(val) > 0;
+                                    const isLateCell = hasVal && act.status_kegiatan === 'Terlambat' && (parseFloat(act.realisasi) || 0) <= 0;
+                                    const cellClass = isLateCell
+                                        ? 'wk-active-late'
+                                        : (hasVal ? 'wk-active-plan-excel' : 'wk-empty-plan');
+                                    const titleTip = `RENCANA ${act.nama_kegiatan} — ${RENLAK_MONTH_NAMES[m]} ${yr} Minggu ${w}${hasVal ? ' (Nilai: ' + val + ')' : ''} [Klik untuk ubah]`;
+                                    bodyHtml += `<td class="renlak-wk-cell ${cellClass}" title="${escapeRenlakHtml(titleTip)}" onclick="promptRenlakWeekCell(${act.id}, 'rencana', '${yr}', '${m}', '${w}')">${hasVal ? val : ''}</td>`;
+                                }
+                            });
+                        });
+
+                        // REALISASI CELLS
+                        yearBlocks.forEach(yb => {
+                            const yr = yb.year;
+                            yb.months.forEach(m => {
+                                for (let w = 1; w <= weeksPerMonth; w++) {
+                                    const val = act.jadwal_realisasi?.[yr]?.[String(m)]?.[String(w)] ?? '';
+                                    const hasVal = val !== '' && parseFloat(val) > 0;
+                                    const cellClass = hasVal ? 'wk-active-real-excel' : 'wk-empty-real';
+                                    const bgStyle = (!hasVal && isCompletedRow) ? 'style="background:#f0fdf4;"' : '';
+                                    const titleTip = `REALISASI ${act.nama_kegiatan} — ${RENLAK_MONTH_NAMES[m]} ${yr} Minggu ${w}${hasVal ? ' (Nilai: ' + val + ')' : ''} [Klik untuk ubah]`;
+                                    bodyHtml += `<td class="renlak-wk-cell ${cellClass}" ${bgStyle} title="${escapeRenlakHtml(titleTip)}" onclick="promptRenlakWeekCell(${act.id}, 'realisasi', '${yr}', '${m}', '${w}')">${hasVal ? val : ''}</td>`;
+                                }
+                            });
+                        });
+                    } else {
+                        // GANTT_UNIFIED CELLS (Combines Rencana & Realisasi with distinct color coding)
+                        yearBlocks.forEach(yb => {
+                            const yr = yb.year;
+                            yb.months.forEach(m => {
+                                for (let w = 1; w <= weeksPerMonth; w++) {
+                                    const pVal = act.jadwal_rencana?.[yr]?.[String(m)]?.[String(w)] ?? '';
+                                    const rVal = act.jadwal_realisasi?.[yr]?.[String(m)]?.[String(w)] ?? '';
+                                    const hasP = pVal !== '' && parseFloat(pVal) > 0;
+                                    const hasR = rVal !== '' && parseFloat(rVal) > 0;
+
+                                    let cellClass = 'wk-empty-gantt';
+                                    let disp = '';
+                                    let nextType = 'rencana';
+
+                                    if (hasP && hasR) {
+                                        cellClass = 'wk-active-both';
+                                        disp = `${pVal}/${rVal}`;
+                                        nextType = 'realisasi';
+                                    } else if (hasR) {
+                                        cellClass = 'wk-active-real';
+                                        disp = rVal;
+                                        nextType = 'realisasi';
+                                    } else if (hasP) {
+                                        if (act.status_kegiatan === 'Terlambat') {
+                                            cellClass = 'wk-active-late';
+                                        } else if (act.status_kegiatan === 'Berjalan') {
+                                            cellClass = 'wk-active-ongoing';
+                                        } else {
+                                            cellClass = 'wk-active-plan';
+                                        }
+                                        disp = pVal;
+                                        nextType = 'realisasi';
+                                    }
+
+                                    const titleTip = `${act.nama_kegiatan} (${RENLAK_MONTH_NAMES[m]} ${yr} M${w}) — Rencana: ${hasP ? pVal : 0}, Realisasi: ${hasR ? rVal : 0}`;
+                                    bodyHtml += `<td class="renlak-wk-cell ${cellClass}" title="${escapeRenlakHtml(titleTip)}" onclick="promptRenlakWeekCell(${act.id}, '${nextType}', '${yr}', '${m}', '${w}')">${disp}</td>`;
+                                }
+                            });
+                        });
+                    }
+
+                    bodyHtml += `</tr>`;
+                });
+            });
+
+            tbody.innerHTML = bodyHtml;
+        }
+
+        window.scrollRenlakTimeline = function(deltaX) {
+            const sc = document.getElementById('renlakTimelineScrollContainer');
+            if (sc) sc.scrollBy({ left: deltaX, behavior: 'smooth' });
+        };
+
+        window.switchRenlakWorkspaceTab = function(tabKey) {
+            renlakActiveWorkspaceTab = tabKey;
+            const tMatrix = document.getElementById('renlakTabContentMatrix');
+            const tMonev = document.getElementById('renlakTabContentMonev');
+            const tHist = document.getElementById('renlakTabContentHistory');
+
+            const bMatrix = document.getElementById('btnRenlakTabMatrix');
+            const bMonev = document.getElementById('btnRenlakTabMonev');
+            const bHist = document.getElementById('btnRenlakTabHistory');
+            const legendBar = document.getElementById('renlakMatrixLegendBar');
+
+            if (tMatrix) tMatrix.style.display = (tabKey === 'matrix') ? 'block' : 'none';
+            if (tMonev) tMonev.style.display = (tabKey === 'monev') ? 'block' : 'none';
+            if (tHist) tHist.style.display = (tabKey === 'history') ? 'block' : 'none';
+            if (legendBar) legendBar.style.display = (tabKey === 'matrix') ? 'flex' : 'none';
+
+            if (bMatrix) bMatrix.classList.toggle('active', tabKey === 'matrix');
+            if (bMonev) bMonev.classList.toggle('active', tabKey === 'monev');
+            if (bHist) bHist.classList.toggle('active', tabKey === 'history');
+
+            if (tabKey === 'monev') {
+                renderRenlakCharts(getFilteredRenlakActivities());
+            }
+        };
+
+        window.promptRenlakWeekCell = async function(actId, schedType, year, month, week) {
+            const act = renlakActivities.find(a => Number(a.id) === Number(actId));
+            if (!act) return;
+
+            const field = (schedType === 'realisasi') ? 'jadwal_realisasi' : 'jadwal_rencana';
+            const labelType = (schedType === 'realisasi') ? 'REALISASI' : 'RENCANA';
+            const currentVal = act[field]?.[year]?.[String(month)]?.[String(week)] ?? '';
+
+            const input = window.prompt(
+                `Ubah Nilai Jadwal ${labelType}\nKegiatan: ${act.nama_kegiatan}\nPeriode: ${RENLAK_MONTH_NAMES[month]} ${year} - Minggu ke-${week}\n\nMasukkan angka volume/target minggu ini (kosongkan atau isi 0 untuk menghapus penanda minggu):`,
+                currentVal !== '' ? String(currentVal) : '1'
+            );
+            if (input === null) return;
+
+            const trimmed = input.trim();
+            const numVal = (trimmed === '' || parseFloat(trimmed) <= 0) ? 0 : parseFloat(trimmed);
+
+            if (!act[field]) act[field] = { '2026': {}, '2027': {} };
+            if (!act[field][year]) act[field][year] = {};
+            if (!act[field][year][String(month)]) act[field][year][String(month)] = {};
+
+            if (numVal <= 0) {
+                delete act[field][year][String(month)][String(week)];
+            } else {
+                act[field][year][String(month)][String(week)] = numVal;
+            }
+
+            localStorage.setItem(RENLAK_STORAGE_KEY, JSON.stringify(renlakActivities));
+            appendLocalAuditLog(
+                'TIMELINE_UPDATE',
+                act.nama_kegiatan,
+                `Jadwal ${labelType} ${RENLAK_MONTH_NAMES[month]} ${year} M${week} diubah menjadi ${numVal > 0 ? numVal : 'Kosong'}`
+            );
+            renderRenlakAll();
+
+            try {
+                await fetch(`${API_BASE}/data?key=toggleRenlakWeekCell`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: act.id,
+                        schedule_type: schedType,
+                        year: year,
+                        month: month,
+                        week: week,
+                        value: numVal > 0 ? numVal : '',
+                        changed_by: LOGGED_IN_USER_NAME
+                    })
+                });
+            } catch (e) {}
+        };
+
+        function renderRenlakMonevTab(list) {
+            const tbody = document.getElementById('renlakMonevTbody');
+            if (!tbody) return;
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center py-4 text-muted">Tidak ada kegiatan yang ditampilkan.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            list.forEach(act => {
+                const pct = calcRenlakPercent(act.realisasi, act.target);
+                const barColor = pct >= 100 ? 'bg-success' : (pct > 0 ? 'bg-primary' : 'bg-secondary');
+                const schedPlan = summarizeRenlakScheduleText(act.jadwal_rencana);
+
+                html += `<tr>
+                    <td class="text-center fw-bold">${act.nomor_urut}</td>
+                    <td>
+                        <div class="fw-bold text-dark">${escapeRenlakHtml(act.nama_kegiatan)}</div>
+                        <small class="text-muted">${escapeRenlakHtml(act.rencana_kegiatan || '-')}</small>
+                    </td>
+                    <td><span class="badge bg-label-primary" style="white-space: normal; text-align: left;">${escapeRenlakHtml(act.kategori)}</span></td>
+                    <td class="text-center">
+                        <input type="number" step="any" min="0" class="form-control form-control-sm text-center fw-bold" value="${act.realisasi}" onchange="quickUpdateRenlakRow(${act.id}, 'realisasi', this.value)">
+                    </td>
+                    <td class="text-center">
+                        <input type="number" step="any" min="0.01" class="form-control form-control-sm text-center fw-bold" value="${act.target}" onchange="quickUpdateRenlakRow(${act.id}, 'target', this.value)">
+                    </td>
+                    <td class="text-center fw-semibold">${escapeRenlakHtml(act.satuan)}</td>
+                    <td>
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <span class="fw-bold" style="color: #034284;">${pct.toFixed(2)}%</span>
+                            <small class="text-muted">${act.realisasi}/${act.target}</small>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar ${barColor}" style="width: ${Math.min(100, pct)}%;"></div>
+                        </div>
+                    </td>
+                    <td style="font-size: 11px;">${escapeRenlakHtml(schedPlan)}</td>
+                    <td class="text-center">
+                        <select class="form-select form-select-sm fw-semibold" onchange="quickUpdateRenlakRow(${act.id}, 'status_kegiatan', this.value)">
+                            <option value="Belum Dimulai" ${act.status_kegiatan === 'Belum Dimulai' ? 'selected' : ''}>Belum Dimulai</option>
+                            <option value="Berjalan" ${act.status_kegiatan === 'Berjalan' ? 'selected' : ''}>Berjalan</option>
+                            <option value="Selesai" ${act.status_kegiatan === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                            <option value="Terlambat" ${act.status_kegiatan === 'Terlambat' ? 'selected' : ''}>Terlambat</option>
+                        </select>
+                    </td>
+                    <td class="text-center">
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-outline-info" onclick="openRenlakDetailModal(${act.id})" title="Detail"><i class="ti ti-eye"></i></button>
+                            <button type="button" class="btn btn-outline-primary" onclick="openRenlakModal(${act.id})" title="Edit"><i class="ti ti-edit"></i></button>
+                            <button type="button" class="btn btn-outline-danger" onclick="confirmDeleteRenlak(${act.id})" title="Hapus"><i class="ti ti-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+
+            // Render Category Achievement Summary Box
+            const catBox = document.getElementById('renlakCategorySummaryBox');
+            if (catBox) {
+                const cats = {};
+                list.forEach(a => {
+                    const k = a.kategori || 'Lainnya';
+                    if (!cats[k]) cats[k] = { count: 0, sumPct: 0 };
+                    cats[k].count++;
+                    cats[k].sumPct += calcRenlakPercent(a.realisasi, a.target);
+                });
+                let catHtml = '<div class="fw-bold small mb-2" style="color:#034284;">Capaian Rata-rata per Kategori:</div>';
+                Object.keys(cats).forEach(k => {
+                    const avg = cats[k].count > 0 ? (cats[k].sumPct / cats[k].count) : 0;
+                    catHtml += `<div class="mb-2">
+                        <div class="d-flex justify-content-between small">
+                            <span class="fw-semibold text-truncate" style="max-width: 210px;">${escapeRenlakHtml(k)}</span>
+                            <span class="fw-bold text-primary">${avg.toFixed(1)}%</span>
+                        </div>
+                        <div class="progress" style="height: 5px;">
+                            <div class="progress-bar bg-primary" style="width: ${Math.min(100, avg)}%;"></div>
+                        </div>
+                    </div>`;
+                });
+                catBox.innerHTML = catHtml;
+            }
+        }
+
+        window.quickUpdateRenlakRow = async function(actId, fieldName, rawValue) {
+            const act = renlakActivities.find(a => Number(a.id) === Number(actId));
+            if (!act) return;
+
+            if (fieldName === 'realisasi') {
+                act.realisasi = Math.max(0, parseFloat(rawValue) || 0);
+                act.persentase_capaian = calcRenlakPercent(act.realisasi, act.target);
+                act.status_kegiatan = determineRenlakAutoStatus(act);
+            } else if (fieldName === 'target') {
+                act.target = Math.max(0.01, parseFloat(rawValue) || 1);
+                act.persentase_capaian = calcRenlakPercent(act.realisasi, act.target);
+                act.status_kegiatan = determineRenlakAutoStatus(act);
+            } else if (fieldName === 'status_kegiatan') {
+                act.status_kegiatan = rawValue;
+            }
+
+            localStorage.setItem(RENLAK_STORAGE_KEY, JSON.stringify(renlakActivities));
+            appendLocalAuditLog(
+                'UPDATE',
+                act.nama_kegiatan,
+                `Pembaruan cepat ${fieldName}: Realisasi=${act.realisasi}, Target=${act.target}, Capaian=${act.persentase_capaian}%, Status=${act.status_kegiatan}`
+            );
+            renderRenlakAll();
+
+            try {
+                await fetch(`${API_BASE}/data?key=saveRenlakActivity`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...act, changed_by: LOGGED_IN_USER_NAME })
+                });
+            } catch (e) {}
+        };
+
+        function renderRenlakCharts(list) {
+            if (!window.Chart) return;
+
+            // 1. Bar Chart: Target vs Realisasi
+            const ctxBar = document.getElementById('chartRenlakTargetRealisasi');
+            if (ctxBar) {
+                if (chartRenlakBarInstance) chartRenlakBarInstance.destroy();
+                const labels = list.map(a => {
+                    const nm = a.nama_kegiatan || '';
+                    return nm.length > 28 ? nm.substring(0, 28) + '...' : nm;
+                });
+                const dataTarget = list.map(a => parseFloat(a.target) || 0);
+                const dataReal = list.map(a => parseFloat(a.realisasi) || 0);
+
+                chartRenlakBarInstance = new Chart(ctxBar, {
                     type: 'bar',
                     data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt'],
+                        labels: labels,
                         datasets: [
-                            { label: 'Pangan', data: [55, 62, 60, 68, 61, 70, 74, 71, 69, 73], backgroundColor: '#0284c7', borderRadius: 3 },
-                            { label: 'Obat/NAPZA', data: [38, 37, 41, 42, 40, 48, 50, 47, 49, 52], backgroundColor: '#0d9488', borderRadius: 3 },
-                            { label: 'Kosmetik', data: [24, 28, 33, 31, 39, 36, 54, 45, 44, 48], backgroundColor: '#eab308', borderRadius: 3 },
-                            { label: 'OT & Suplemen', data: [19, 21, 26, 28, 27, 29, 32, 30, 31, 34], backgroundColor: '#22c55e', borderRadius: 3 },
-                            { label: 'Mikrobiologi', data: [15, 14, 30, 25, 29, 26, 20, 19, 24, 31], backgroundColor: '#8b5cf6', borderRadius: 3 }
+                            {
+                                label: 'Target Output',
+                                data: dataTarget,
+                                backgroundColor: '#3b82f6',
+                                borderRadius: 4
+                            },
+                            {
+                                label: 'Realisasi Output',
+                                data: dataReal,
+                                backgroundColor: '#10b981',
+                                borderRadius: 4
+                            }
                         ]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: { display: false }
+                            legend: { position: 'top' }
+                        },
+                        scales: {
+                            y: { beginAtZero: true },
+                            x: { ticks: { font: { size: 10 } } }
+                        }
+                    }
+                });
+            }
+
+            // 2. Doughnut Chart: Status Kegiatan
+            const ctxPie = document.getElementById('chartRenlakStatusPie');
+            if (ctxPie) {
+                if (chartRenlakPieInstance) chartRenlakPieInstance.destroy();
+                const sCounts = { 'Selesai': 0, 'Berjalan': 0, 'Belum Dimulai': 0, 'Terlambat': 0 };
+                list.forEach(a => {
+                    const st = a.status_kegiatan || 'Belum Dimulai';
+                    if (sCounts[st] !== undefined) sCounts[st]++;
+                });
+
+                chartRenlakPieInstance = new Chart(ctxPie, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Selesai', 'Berjalan', 'Belum Dimulai', 'Terlambat'],
+                        datasets: [{
+                            data: [sCounts['Selesai'], sCounts['Berjalan'], sCounts['Belum Dimulai'], sCounts['Terlambat']],
+                            backgroundColor: ['#10b981', '#f59e0b', '#94a3b8', '#ef4444']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } } }
+                        }
+                    }
+                });
+            }
+        }
+
+        function renderRenlakAuditTab() {
+            const badge = document.getElementById('renlakAuditCountBadge');
+            if (badge) badge.textContent = renlakAuditLogs.length;
+
+            const tbody = document.getElementById('renlakAuditTbody');
+            if (!tbody) return;
+
+            if (!Array.isArray(renlakAuditLogs) || renlakAuditLogs.length === 0) {
+                tbody.innerHTML = `<tr>
+                    <td colspan="5" class="text-center py-4 text-muted">
+                        Belum ada riwayat perubahan kegiatan yang tercatat.
+                    </td>
+                </tr>`;
+                return;
+            }
+
+            tbody.innerHTML = renlakAuditLogs.map(log => {
+                let badgeCls = 'bg-label-primary';
+                if (log.action_type === 'CREATE') badgeCls = 'bg-label-success';
+                else if (log.action_type === 'DELETE') badgeCls = 'bg-label-danger';
+                else if (log.action_type === 'TIMELINE_UPDATE') badgeCls = 'bg-label-info';
+
+                return `<tr>
+                    <td class="text-muted small">${escapeRenlakHtml(log.created_at || '-')}</td>
+                    <td class="fw-semibold">${escapeRenlakHtml(log.changed_by || 'Admin Lab')}</td>
+                    <td><span class="badge ${badgeCls}">${escapeRenlakHtml(log.action_type || 'UPDATE')}</span></td>
+                    <td class="fw-bold">${escapeRenlakHtml(log.nama_kegiatan || '-')}</td>
+                    <td>${escapeRenlakHtml(log.change_description || '-')}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        // =========================================================================
+        // MODAL TAMBAH / EDIT & JADWAL MINGGUAN INTERAKTIF
+        // =========================================================================
+        window.recalcRenlakModalPercentage = function() {
+            const r = parseFloat(document.getElementById('renlakInputRealisasi')?.value) || 0;
+            const t = parseFloat(document.getElementById('renlakInputTarget')?.value) || 0;
+            const pct = calcRenlakPercent(r, t);
+            const el = document.getElementById('renlakInputPersenPreview');
+            if (el) el.value = `${pct.toFixed(2)}%`;
+        };
+
+        window.switchModalScheduleMode = function(mode) {
+            modalScheduleEditMode = mode;
+            const btnPlan = document.getElementById('btnPickerModePlan');
+            const btnReal = document.getElementById('btnPickerModeReal');
+            if (btnPlan) {
+                btnPlan.className = (mode === 'plan') ? 'btn btn-primary active' : 'btn btn-outline-primary';
+            }
+            if (btnReal) {
+                btnReal.className = (mode === 'real') ? 'btn btn-success active' : 'btn btn-outline-success';
+            }
+            renderModalSchedulePickerGrid();
+        };
+
+        window.renderModalSchedulePickerGrid = function() {
+            const container = document.getElementById('modalSchedulePickerContainer');
+            if (!container) return;
+
+            const yr = document.getElementById('modalScheduleYearSelect')?.value || '2026';
+            const activeMap = (modalScheduleEditMode === 'real') ? modalTempJadwalRealisasi : modalTempJadwalRencana;
+            if (!activeMap[yr]) activeMap[yr] = {};
+
+            let html = '';
+            for (let m = 1; m <= 12; m++) {
+                const mStr = String(m);
+                const wMap = activeMap[yr][mStr] || {};
+
+                html += `<div class="col-6 col-md-3">
+                    <div class="renlak-picker-month-box">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="fw-bold small" style="color: #0f172a;">${RENLAK_MONTH_NAMES[m]} ${yr}</span>
+                            <span class="text-muted" style="font-size: 10px;">M1–M5</span>
+                        </div>
+                        <div class="d-flex gap-1 justify-content-between">`;
+
+                for (let w = 1; w <= 5; w++) {
+                    const wStr = String(w);
+                    const val = wMap[wStr];
+                    const isSelected = val !== undefined && val !== '' && parseFloat(val) > 0;
+                    const selClass = isSelected
+                        ? (modalScheduleEditMode === 'real' ? 'selected-real' : 'selected-plan')
+                        : '';
+                    html += `<button type="button" class="renlak-picker-wk-btn ${selClass}" onclick="toggleModalWeekPick('${yr}', '${mStr}', '${wStr}')" title="Minggu ${w}${isSelected ? ' (Nilai: ' + val + ')' : ''}">
+                        ${isSelected ? 'M' + w + (parseFloat(val) > 1 ? ':' + val : '') : 'M' + w}
+                    </button>`;
+                }
+
+                html += `</div></div></div>`;
+            }
+
+            container.innerHTML = html;
+        };
+
+        window.toggleModalWeekPick = function(yr, mStr, wStr) {
+            const activeMap = (modalScheduleEditMode === 'real') ? modalTempJadwalRealisasi : modalTempJadwalRencana;
+            if (!activeMap[yr]) activeMap[yr] = {};
+            if (!activeMap[yr][mStr]) activeMap[yr][mStr] = {};
+
+            const cur = activeMap[yr][mStr][wStr];
+            if (cur !== undefined && parseFloat(cur) > 0) {
+                delete activeMap[yr][mStr][wStr];
+            } else {
+                activeMap[yr][mStr][wStr] = 1;
+            }
+            renderModalSchedulePickerGrid();
+        };
+
+        window.openRenlakModal = function(actId = 0) {
+            const isEdit = Number(actId) > 0;
+            const act = isEdit ? renlakActivities.find(a => Number(a.id) === Number(actId)) : null;
+
+            const titleEl = document.getElementById('modalRenlakFormTitle');
+            if (titleEl) {
+                titleEl.innerHTML = isEdit
+                    ? `<i class="ti ti-edit me-1"></i> Edit Kegiatan RENLAK`
+                    : `<i class="ti ti-calendar-plus me-1"></i> Tambah Kegiatan RENLAK Baru`;
+            }
+
+            document.getElementById('renlakInputId').value = act ? act.id : 0;
+            document.getElementById('renlakInputNomor').value = act ? act.nomor_urut : (renlakActivities.length + 1);
+            document.getElementById('renlakInputKategori').value = act ? act.kategori : 'Pengembangan Digitalisasi LAB';
+            document.getElementById('renlakInputNama').value = act ? act.nama_kegiatan : '';
+            document.getElementById('renlakInputRealisasi').value = act ? act.realisasi : 0;
+            document.getElementById('renlakInputTarget').value = act ? act.target : 1;
+            document.getElementById('renlakInputSatuan').value = act ? act.satuan : 'Fitur';
+            document.getElementById('renlakInputStatus').value = act ? act.status_kegiatan : 'AUTO';
+            document.getElementById('renlakInputRencanaText').value = act ? (act.rencana_kegiatan || '') : '';
+            document.getElementById('renlakInputPic').value = act ? (act.pic_penanggung_jawab || 'Tim Digitalisasi Lab') : 'Tim Digitalisasi Lab';
+            document.getElementById('renlakInputCatatan').value = act ? (act.catatan_evaluasi || '') : '';
+
+            modalTempJadwalRencana = act && act.jadwal_rencana
+                ? JSON.parse(JSON.stringify(act.jadwal_rencana))
+                : { '2026': {}, '2027': {} };
+            modalTempJadwalRealisasi = act && act.jadwal_realisasi
+                ? JSON.parse(JSON.stringify(act.jadwal_realisasi))
+                : { '2026': {}, '2027': {} };
+
+            recalcRenlakModalPercentage();
+            switchModalScheduleMode('plan');
+
+            const modalEl = document.getElementById('modalRenlakForm');
+            if (modalEl && window.bootstrap) {
+                const m = bootstrap.Modal.getOrCreateInstance(modalEl);
+                m.show();
+            }
+        };
+
+        window.saveRenlakForm = async function() {
+            const id = parseInt(document.getElementById('renlakInputId')?.value || '0', 10);
+            const nomor_urut = parseInt(document.getElementById('renlakInputNomor')?.value || '1', 10);
+            const kategori = (document.getElementById('renlakInputKategori')?.value || '').trim();
+            const nama_kegiatan = (document.getElementById('renlakInputNama')?.value || '').trim();
+            const realisasi = parseFloat(document.getElementById('renlakInputRealisasi')?.value || '0');
+            const target = parseFloat(document.getElementById('renlakInputTarget')?.value || '0');
+            const satuan = (document.getElementById('renlakInputSatuan')?.value || '').trim();
+            const statusSelect = document.getElementById('renlakInputStatus')?.value || 'AUTO';
+            const rencana_kegiatan = (document.getElementById('renlakInputRencanaText')?.value || '').trim();
+            const pic_penanggung_jawab = (document.getElementById('renlakInputPic')?.value || '').trim();
+            const catatan_evaluasi = (document.getElementById('renlakInputCatatan')?.value || '').trim();
+
+            if (!nama_kegiatan) {
+                alert('Nama Kegiatan / Sasaran wajib diisi!');
+                return;
+            }
+            if (!kategori) {
+                alert('Kategori Kegiatan wajib diisi!');
+                return;
+            }
+            if (isNaN(target) || target <= 0) {
+                alert('Target harus berupa angka lebih dari 0!');
+                return;
+            }
+            if (isNaN(realisasi) || realisasi < 0) {
+                alert('Realisasi tidak boleh bernilai negatif!');
+                return;
+            }
+
+            const persentase_capaian = calcRenlakPercent(realisasi, target);
+            const tempObj = {
+                id: id > 0 ? id : Date.now(),
+                nomor_urut,
+                kategori,
+                nama_kegiatan,
+                rencana_kegiatan: rencana_kegiatan || summarizeRenlakScheduleText(modalTempJadwalRencana),
+                realisasi,
+                target,
+                satuan: satuan || 'Kegiatan',
+                persentase_capaian,
+                status_kegiatan: statusSelect,
+                tahun_awal: 2026,
+                tahun_akhir: 2027,
+                jadwal_rencana: JSON.parse(JSON.stringify(modalTempJadwalRencana)),
+                jadwal_realisasi: JSON.parse(JSON.stringify(modalTempJadwalRealisasi)),
+                catatan_evaluasi,
+                pic_penanggung_jawab: pic_penanggung_jawab || 'Tim Digitalisasi Lab'
+            };
+
+            if (statusSelect === 'AUTO') {
+                tempObj.status_kegiatan = determineRenlakAutoStatus(tempObj);
+            }
+
+            if (id > 0) {
+                const idx = renlakActivities.findIndex(a => Number(a.id) === Number(id));
+                if (idx >= 0) renlakActivities[idx] = tempObj;
+                appendLocalAuditLog('UPDATE', nama_kegiatan, `Kegiatan diperbarui (Realisasi: ${realisasi}/${target} ${tempObj.satuan} = ${persentase_capaian}%, Status: ${tempObj.status_kegiatan})`);
+            } else {
+                renlakActivities.push(tempObj);
+                appendLocalAuditLog('CREATE', nama_kegiatan, `Kegiatan baru ditambahkan pada kategori ${kategori} (Target: ${target} ${tempObj.satuan})`);
+            }
+
+            localStorage.setItem(RENLAK_STORAGE_KEY, JSON.stringify(renlakActivities));
+            renderRenlakAll();
+
+            const modalEl = document.getElementById('modalRenlakForm');
+            if (modalEl && window.bootstrap) {
+                const m = bootstrap.Modal.getInstance(modalEl);
+                if (m) m.hide();
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/data?key=saveRenlakActivity`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...tempObj, id: id, changed_by: LOGGED_IN_USER_NAME })
+                });
+                if (res.ok) {
+                    const json = await res.json();
+                    if (json && json.status === 'success' && json.activity && id === 0) {
+                        tempObj.id = json.activity.id;
+                        localStorage.setItem(RENLAK_STORAGE_KEY, JSON.stringify(renlakActivities));
+                        renderRenlakAll();
+                    }
+                }
+            } catch (e) {}
+        };
+
+        window.confirmDeleteRenlak = async function(actId) {
+            const act = renlakActivities.find(a => Number(a.id) === Number(actId));
+            if (!act) return;
+
+            const ok = window.confirm(`Apakah Anda yakin ingin menghapus kegiatan berikut dari RENLAK?\n\n"${act.nama_kegiatan}"\nKategori: ${act.kategori}`);
+            if (!ok) return;
+
+            renlakActivities = renlakActivities.filter(a => Number(a.id) !== Number(actId));
+            localStorage.setItem(RENLAK_STORAGE_KEY, JSON.stringify(renlakActivities));
+            appendLocalAuditLog('DELETE', act.nama_kegiatan, `Kegiatan dihapus dari daftar RENLAK.`);
+            renderRenlakAll();
+
+            try {
+                await fetch(`${API_BASE}/data?key=deleteRenlakActivity`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: actId, changed_by: LOGGED_IN_USER_NAME })
+                });
+            } catch (e) {}
+        };
+
+        window.openRenlakDetailModal = function(actId) {
+            const act = renlakActivities.find(a => Number(a.id) === Number(actId));
+            if (!act) return;
+
+            const pct = calcRenlakPercent(act.realisasi, act.target);
+            const schedPlan = summarizeRenlakScheduleText(act.jadwal_rencana);
+            const schedReal = summarizeRenlakScheduleText(act.jadwal_realisasi);
+
+            const bodyEl = document.getElementById('modalRenlakDetailBody');
+            if (bodyEl) {
+                bodyEl.innerHTML = `
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 pb-2 border-bottom">
+                        <div>
+                            <span class="badge bg-label-primary mb-1">${escapeRenlakHtml(act.kategori)}</span>
+                            <h5 class="fw-bold mb-0" style="color: #0f172a;">${act.nomor_urut}. ${escapeRenlakHtml(act.nama_kegiatan)}</h5>
+                        </div>
+                        <div>${getRenlakStatusBadgeHtml(act.status_kegiatan)}</div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded border bg-light text-center">
+                                <div class="text-muted small">Target</div>
+                                <div class="fs-5 fw-bold text-dark">${act.target} ${escapeRenlakHtml(act.satuan)}</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded border bg-light text-center">
+                                <div class="text-muted small">Realisasi</div>
+                                <div class="fs-5 fw-bold text-success">${act.realisasi} ${escapeRenlakHtml(act.satuan)}</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded border text-center" style="background: #dcfce7;">
+                                <div class="text-muted small">% Capaian</div>
+                                <div class="fs-5 fw-bold text-success">${pct.toFixed(2)}%</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded border bg-light text-center">
+                                <div class="text-muted small">Periode Tahun</div>
+                                <div class="fs-6 fw-bold text-primary">${act.tahun_awal} &ndash; ${act.tahun_akhir}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="fw-bold small text-muted d-block mb-1">Rencana Kegiatan / Uraian Sasaran:</label>
+                        <div class="p-2 rounded border bg-white">${escapeRenlakHtml(act.rencana_kegiatan || '-')}</div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-6">
+                            <label class="fw-bold small text-primary d-block mb-1"><i class="ti ti-calendar-event me-1"></i> Jadwal Pelaksanaan (Rencana):</label>
+                            <div class="p-2 rounded border" style="background: #fffbeb;">${escapeRenlakHtml(schedPlan)}</div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="fw-bold small text-success d-block mb-1"><i class="ti ti-checks me-1"></i> Jadwal Pelaksanaan (Realisasi):</label>
+                            <div class="p-2 rounded border" style="background: #f0fdf4;">${escapeRenlakHtml(schedReal)}</div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label class="fw-bold small text-muted d-block mb-1">Penanggung Jawab (PIC):</label>
+                            <div class="p-2 rounded border bg-light">${escapeRenlakHtml(act.pic_penanggung_jawab || '-')}</div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="fw-bold small text-muted d-block mb-1">Catatan Monitoring &amp; Evaluasi:</label>
+                            <div class="p-2 rounded border bg-light">${escapeRenlakHtml(act.catatan_evaluasi || '-')}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const btnEdit = document.getElementById('btnDetailEditRenlak');
+            if (btnEdit) {
+                btnEdit.onclick = function() {
+                    const md = document.getElementById('modalRenlakDetail');
+                    if (md && window.bootstrap) {
+                        const inst = bootstrap.Modal.getInstance(md);
+                        if (inst) inst.hide();
+                    }
+                    openRenlakModal(act.id);
+                };
+            }
+
+            const modalEl = document.getElementById('modalRenlakDetail');
+            if (modalEl && window.bootstrap) {
+                const m = bootstrap.Modal.getOrCreateInstance(modalEl);
+                m.show();
+            }
+        };
+
+        window.resetRenlakToExcelDefault = async function() {
+            const ok = window.confirm('Kembalikan data RENLAK ke 11 kegiatan standar sesuai referensi Excel BBPOM di Bandung?');
+            if (!ok) return;
+
+            renlakActivities = JSON.parse(JSON.stringify(RENLAK_DEFAULT_SEED));
+            localStorage.setItem(RENLAK_STORAGE_KEY, JSON.stringify(renlakActivities));
+            appendLocalAuditLog('RESET_DEFAULT', 'Seluruh Kegiatan RENLAK', 'Data RENLAK direset ke 11 kegiatan referensi Excel (29-Oct-26).');
+            renderRenlakAll();
+
+            try {
+                await fetch(`${API_BASE}/data?key=resetRenlakDefault`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ changed_by: LOGGED_IN_USER_NAME })
+                });
+            } catch (e) {}
+        };
+
+        // =========================================================================
+        // LAPORAN RENLAK: EKSPOR EXCEL (.XLS), EKSPOR PDF & CETAK LAPORAN
+        // =========================================================================
+        window.exportRenlakExcel = function() {
+            const list = getFilteredRenlakActivities();
+            const weeksPerMonth = parseInt(document.getElementById('renlakWeeksPerMonth')?.value || '4', 10);
+            const yearBlocks = getVisibleTimelineMonths();
+
+            let totalCols = 6;
+            yearBlocks.forEach(yb => { totalCols += yb.months.length * weeksPerMonth * 2; });
+
+            let html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+            <head><meta charset="UTF-8"><style>
+                table { border-collapse: collapse; font-family: Arial, sans-serif; font-size: 10pt; }
+                th, td { border: 1px solid #000000; padding: 4px 6px; vertical-align: middle; }
+                .hdr { background: #d9d9d9; font-weight: bold; text-align: center; }
+                .cat { background: #ffff00; font-weight: bold; }
+                .cap { background: #d9ead3; font-weight: bold; text-align: center; }
+                .plan { background: #fff2cc; text-align: center; }
+                .real { background: #d9e1f2; text-align: center; }
+            </style></head><body><table>`;
+
+            html += `<tr><td style="background:#f4cccc;font-weight:bold;">TANGGAL</td><td style="font-weight:bold;">29-Oct-26</td><td colspan="${totalCols - 2}"><strong>PERENCANAAN LABORATORIUM (RENLAK) - DIGITLAB BBPOM DI BANDUNG</strong></td></tr>`;
+
+            // Header rows
+            let r1 = `<tr><th rowspan="3" class="hdr">No.</th><th rowspan="3" class="hdr">Nama Kegiatan/ Sasaran</th><th rowspan="3" class="hdr">Realisasi</th><th rowspan="3" class="hdr">Target</th><th rowspan="3" class="hdr">Satuan</th><th rowspan="3" class="hdr">% CAPAIAN</th>`;
+            let r2 = `<tr>`;
+            let r3 = `<tr>`;
+
+            yearBlocks.forEach(yb => {
+                r1 += `<th colspan="${yb.months.length * weeksPerMonth}" class="hdr">RENCANA ${yb.year}</th>`;
+                yb.months.forEach(m => {
+                    r2 += `<th colspan="${weeksPerMonth}" class="hdr">${RENLAK_MONTH_NAMES[m]}</th>`;
+                    for (let w = 1; w <= weeksPerMonth; w++) r3 += `<th class="hdr">${w}</th>`;
+                });
+            });
+            yearBlocks.forEach(yb => {
+                r1 += `<th colspan="${yb.months.length * weeksPerMonth}" class="hdr">REALISASI ${yb.year}</th>`;
+                yb.months.forEach(m => {
+                    r2 += `<th colspan="${weeksPerMonth}" class="hdr">${RENLAK_MONTH_NAMES[m]}</th>`;
+                    for (let w = 1; w <= weeksPerMonth; w++) r3 += `<th class="hdr">${w}</th>`;
+                });
+            });
+            r1 += `</tr>`; r2 += `</tr>`; r3 += `</tr>`;
+            html += r1 + r2 + r3;
+
+            const categoryOrder = ['Perencanaan', 'Pengembangan Digitalisasi LAB', 'Monitoring dan Evaluasi'];
+            const grouped = {};
+            list.forEach(item => {
+                const k = item.kategori || 'Lainnya';
+                if (!grouped[k]) grouped[k] = [];
+                grouped[k].push(item);
+            });
+            const orderedCategories = [
+                ...categoryOrder.filter(k => grouped[k] && grouped[k].length > 0),
+                ...Object.keys(grouped).filter(k => !categoryOrder.includes(k))
+            ];
+
+            orderedCategories.forEach(kat => {
+                html += `<tr class="cat"><td></td><td>${escapeRenlakHtml(kat)}</td><td colspan="${totalCols - 2}"></td></tr>`;
+                grouped[kat].forEach(act => {
+                    const pct = calcRenlakPercent(act.realisasi, act.target);
+                    html += `<tr>
+                        <td style="text-align:center;font-weight:bold;">${act.nomor_urut}</td>
+                        <td>${escapeRenlakHtml(act.nama_kegiatan)}</td>
+                        <td style="text-align:center;">${act.realisasi}</td>
+                        <td style="text-align:center;">${act.target}</td>
+                        <td style="text-align:center;">${escapeRenlakHtml(act.satuan)}</td>
+                        <td class="cap">${pct.toFixed(2)}%</td>`;
+
+                    yearBlocks.forEach(yb => {
+                        yb.months.forEach(m => {
+                            for (let w = 1; w <= weeksPerMonth; w++) {
+                                const v = act.jadwal_rencana?.[yb.year]?.[String(m)]?.[String(w)] ?? '';
+                                html += `<td class="plan">${v !== '' && parseFloat(v) > 0 ? v : ''}</td>`;
+                            }
+                        });
+                    });
+                    yearBlocks.forEach(yb => {
+                        yb.months.forEach(m => {
+                            for (let w = 1; w <= weeksPerMonth; w++) {
+                                const v = act.jadwal_realisasi?.[yb.year]?.[String(m)]?.[String(w)] ?? '';
+                                html += `<td class="real">${v !== '' && parseFloat(v) > 0 ? v : ''}</td>`;
+                            }
+                        });
+                    });
+                    html += `</tr>`;
+                });
+            });
+
+            html += `</table></body></html>`;
+            const blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `RENLAK_DigitLab_BBPOM_Bandung_2026_2027.xls`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
+
+        window.exportRenlakPdf = function() {
+            if (!window.jspdf || !window.jspdf.jsPDF) {
+                alert('Pustaka jsPDF belum siap. Silakan muat ulang halaman.');
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('l', 'mm', 'a4');
+            const list = getFilteredRenlakActivities();
+
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(13);
+            doc.text('LAPORAN PERENCANAAN LABORATORIUM (RENLAK) - DIGITLAB BDG', 14, 14);
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9.5);
+            doc.text('Balai Besar POM di Bandung | Periode Perencanaan: Tahun 2026 - 2027 | Tanggal Acuan: 29-Oct-26', 14, 20);
+
+            const rows = [];
+            list.forEach(act => {
+                const pct = calcRenlakPercent(act.realisasi, act.target);
+                rows.push([
+                    act.nomor_urut,
+                    act.kategori,
+                    act.nama_kegiatan,
+                    act.realisasi,
+                    act.target,
+                    act.satuan,
+                    `${pct.toFixed(2)}%`,
+                    act.rencana_kegiatan || '-',
+                    summarizeRenlakScheduleText(act.jadwal_rencana),
+                    act.status_kegiatan
+                ]);
+            });
+
+            if (typeof doc.autoTable === 'function') {
+                doc.autoTable({
+                    startY: 25,
+                    head: [['No.', 'Kategori', 'Nama Kegiatan / Sasaran', 'Realisasi', 'Target', 'Satuan', '% Capaian', 'Rencana Kegiatan', 'Jadwal Pelaksanaan', 'Status']],
+                    body: rows,
+                    styles: { fontSize: 8, cellPadding: 2.2 },
+                    headStyles: { fillColor: [3, 66, 132], textColor: 255, fontStyle: 'bold' },
+                    columnStyles: {
+                        0: { halign: 'center', cellWidth: 10 },
+                        3: { halign: 'center', cellWidth: 16 },
+                        4: { halign: 'center', cellWidth: 15 },
+                        5: { halign: 'center', cellWidth: 18 },
+                        6: { halign: 'center', cellWidth: 20, fontStyle: 'bold' },
+                        9: { halign: 'center', cellWidth: 22 }
+                    }
+                });
+            }
+
+            doc.save('Laporan_RENLAK_DigitLab_BBPOM_Bandung_2026_2027.pdf');
+        };
+
+        window.printRenlakReport = function() {
+            const list = getFilteredRenlakActivities();
+            let rowsHtml = '';
+            list.forEach(act => {
+                const pct = calcRenlakPercent(act.realisasi, act.target);
+                rowsHtml += `<tr>
+                    <td style="text-align:center;">${act.nomor_urut}</td>
+                    <td>${escapeRenlakHtml(act.kategori)}</td>
+                    <td><strong>${escapeRenlakHtml(act.nama_kegiatan)}</strong></td>
+                    <td style="text-align:center;">${act.realisasi}</td>
+                    <td style="text-align:center;">${act.target}</td>
+                    <td style="text-align:center;">${escapeRenlakHtml(act.satuan)}</td>
+                    <td style="text-align:center;background:#d9ead3;font-weight:bold;">${pct.toFixed(2)}%</td>
+                    <td>${escapeRenlakHtml(act.rencana_kegiatan || '-')}</td>
+                    <td>${escapeRenlakHtml(summarizeRenlakScheduleText(act.jadwal_rencana))}</td>
+                    <td style="text-align:center;">${escapeRenlakHtml(act.status_kegiatan)}</td>
+                </tr>`;
+            });
+
+            const w = window.open('', '_blank');
+            if (!w) return;
+            w.document.write(`<!DOCTYPE html><html><head><title>Cetak Laporan RENLAK - DigitLab BDG</title>
+            <style>
+                @page { size: A4 landscape; margin: 12mm; }
+                body { font-family: Arial, sans-serif; font-size: 11px; color: #111; }
+                h2 { margin: 0 0 4px 0; color: #034284; }
+                p { margin: 0 0 12px 0; color: #444; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { border: 1px solid #333; padding: 6px 8px; vertical-align: middle; }
+                th { background: #034284; color: #fff; text-align: center; }
+            </style></head><body>
+            <h2>PERENCANAAN LABORATORIUM (RENLAK) - DIGITLAB BBPOM DI BANDUNG</h2>
+            <p>Periode Perencanaan: Tahun 2026 &ndash; 2027 | Tanggal Acuan: 29-Oct-26 | Dicetak oleh: ${escapeRenlakHtml(LOGGED_IN_USER_NAME)}</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Kategori</th>
+                        <th>Nama Kegiatan / Sasaran</th>
+                        <th>Realisasi</th>
+                        <th>Target</th>
+                        <th>Satuan</th>
+                        <th>% Capaian</th>
+                        <th>Rencana Kegiatan</th>
+                        <th>Jadwal Pelaksanaan</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>${rowsHtml}</tbody>
+            </table>
+            <script>window.onload = function(){ window.print(); };<\/script>
+            </body></html>`);
+            w.document.close();
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize RENLAK module data immediately
+            renderRenlakAll();
+            // Initialize default HULS form values immediately
+            populateHulsForm(HULS_DEFAULT_DOC);
+            // Initialize Rekapitulasi Sampel Uji Chart (Exact BBPOM Spreadsheet Replica)
+            const ctxKom = document.getElementById('chartDashboardKomoditi');
+            if (ctxKom && window.Chart) {
+                new Chart(ctxKom, {
+                    type: 'bar',
+                    data: {
+                        labels: [
+                            ['Jumlah Sampel', 'Sediaan Farmasi', '-Obat'],
+                            ['Jumlah Sampel', 'Sediaan Farmasi', '-OBA'],
+                            ['Jumlah Sampel', 'Sediaan Farmasi -SK'],
+                            ['Jumlah Sampel', 'Sediaan Farmasi', '-Kosmetik'],
+                            ['Jumlah Sampel', 'Sediaan Pangan', 'Olahan'],
+                            ['Jumlah Sampel KLB']
+                        ],
+                        datasets: [
+                            { label: 'TARGET', data: [null, null, null, null, null, null], backgroundColor: '#4a86e8', barPercentage: 0.9, categoryPercentage: 0.78 },
+                            { label: 'JAN',    data: [25, 22, 10, 34, 81, null],           backgroundColor: '#cc4125', barPercentage: 0.9, categoryPercentage: 0.78 },
+                            { label: 'FEB',    data: [41, 26, 7, 60, 54, null],            backgroundColor: '#f1c232', barPercentage: 0.9, categoryPercentage: 0.78 },
+                            { label: 'MAR',    data: [37, 28, 8, 60, 51, null],            backgroundColor: '#6aa84f', barPercentage: 0.9, categoryPercentage: 0.78 },
+                            { label: 'APR',    data: [36, 18, 4, 52, 17, null],            backgroundColor: '#e6693e', barPercentage: 0.9, categoryPercentage: 0.78 },
+                            { label: 'MEI',    data: [46, 49, 10, 70, 41, null],           backgroundColor: '#46bdc6', barPercentage: 0.9, categoryPercentage: 0.78 },
+                            { label: 'JUN',    data: [46, 37, 7, 64, 30, null],            backgroundColor: '#6d9eeb', barPercentage: 0.9, categoryPercentage: 0.78 },
+                            { label: 'JUL',    data: [43, 35, 5, 62, 30, null],            backgroundColor: '#c27ba0', barPercentage: 0.9, categoryPercentage: 0.78 },
+                            { label: 'AGS',    data: [43, 18, 6, 62, 55, null],            backgroundColor: '#e6c86e', barPercentage: 0.9, categoryPercentage: 0.78 },
+                            { label: 'SEPT',   data: [42, 32, 4, 61, 21, null],            backgroundColor: '#67b87c', barPercentage: 0.9, categoryPercentage: 0.78 },
+                            { label: 'OKT',    data: [null, null, null, null, null, null], backgroundColor: '#f69679', barPercentage: 0.9, categoryPercentage: 0.78 },
+                            { label: 'NOV',    data: [null, null, null, null, null, null], backgroundColor: '#8fd3d8', barPercentage: 0.9, categoryPercentage: 0.78 },
+                            { label: 'DES',    data: [null, null, null, null, null, null], backgroundColor: '#a4c2f4', barPercentage: 0.9, categoryPercentage: 0.78 }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'right',
+                                align: 'start',
+                                labels: {
+                                    boxWidth: 9,
+                                    boxHeight: 9,
+                                    padding: 6,
+                                    color: '#333333',
+                                    font: {
+                                        family: 'Arial, sans-serif',
+                                        size: 9
+                                    }
+                                }
+                            }
                         },
                         scales: {
                             y: {
-                                beginAtZero: true,
-                                grid: { color: '#f1f5f9' }
+                                min: 0,
+                                max: 100,
+                                ticks: {
+                                    stepSize: 25,
+                                    color: '#333333',
+                                    font: { family: 'Arial, sans-serif', size: 9 }
+                                },
+                                grid: {
+                                    color: '#d9d9d9',
+                                    drawBorder: false
+                                }
                             },
                             x: {
-                                grid: { display: false }
+                                ticks: {
+                                    color: '#222222',
+                                    maxRotation: 0,
+                                    minRotation: 0,
+                                    font: { family: 'Arial, sans-serif', size: 8.5 }
+                                },
+                                grid: {
+                                    display: false
+                                }
                             }
                         }
                     }
@@ -6219,6 +8925,6 @@
             });
         });
     </script>
-    <script charset="utf-8" src="app.js?v=37"></script>
+    <script charset="utf-8" src="app.js?v=38"></script>
 </body>
 </html>
